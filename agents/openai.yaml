@@ -1,4 +1,4 @@
 interface:
-  display_name: "面试准备助手"
-  short_description: "根据岗位链接、职位描述与个人简历生成证据驱动的定制面试准备文档"
-  default_prompt: "使用 $interview-prep，根据岗位链接或职位描述和我的简历生成详细的面试准备文档。"
+  display_name: "Interview Prep / 面试准备"
+  short_description: "支持中英文岗位与简历交叉匹配的证据驱动定制面试准备文档"
+  default_prompt: "使用 $interview-prep，根据中文或英文岗位和简历生成对应面试语言的定制准备文档。"
