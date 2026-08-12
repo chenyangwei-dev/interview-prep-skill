@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{{Company}} — {{Role}} Interview Preparation</title>
+  <style>
+    :root {
+      --ink: #182230; --muted: #5f6b7a; --line: #dce3ea; --surface: #fff; --soft: #f4f7fa;
+      --navy: #102a43; --blue: #1267a5; --cyan: #0b8093; --green: #1f7a5a;
+      --amber: #a45f08; --red: #b33a3a; --violet: #6c4ccf;
+      --shadow: 0 16px 44px rgba(16, 42, 67, .10); --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0; color: var(--ink); line-height: 1.65;
+      background: radial-gradient(circle at 10% 0%, rgba(11,128,147,.10), transparent 28rem), linear-gradient(180deg,#f7fafc 0,#edf3f7 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+    a { color: var(--blue); }
+    button, input { font: inherit; }
+    button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid rgba(18,103,165,.35); outline-offset: 3px; }
+    .hero {
+      position: relative; overflow: hidden; padding: 48px max(24px, calc((100vw - 1280px) / 2)); color: #fff;
+      background: linear-gradient(120deg,rgba(16,42,67,.98),rgba(11,128,147,.92)),var(--navy);
+    }
+    .hero::after { content: ""; position: absolute; width: 360px; height: 360px; right: -120px; top: -180px; border: 1px solid rgba(255,255,255,.24); border-radius: 50%; box-shadow: 0 0 0 56px rgba(255,255,255,.04),0 0 0 112px rgba(255,255,255,.03); }
+    .eyebrow { margin: 0 0 10px; color: #91e6e5; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 0; max-width: 900px; font-size: clamp(2rem,5vw,4.4rem); line-height: 1.08; letter-spacing: -.04em; }
+    .subtitle { max-width: 800px; margin: 18px 0 0; color: #d9edf2; font-size: 1.05rem; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .meta span { padding: 7px 12px; border: 1px solid rgba(255,255,255,.24); border-radius: 999px; background: rgba(255,255,255,.08); font-size: .88rem; }
+    .shell { display: grid; grid-template-columns: 230px minmax(0,1fr); gap: 28px; max-width: 1320px; margin: 0 auto; padding: 28px 20px 64px; }
+    .side { position: sticky; top: 18px; align-self: start; max-height: calc(100vh - 36px); overflow: auto; }
+    .side nav { padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.90); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
+    .side a { display: block; padding: 9px 11px; color: var(--muted); border-radius: 10px; font-size: .88rem; font-weight: 700; text-decoration: none; }
+    .side a:hover, .side a.active { color: var(--navy); background: #e9f3f7; }
+    main { min-width: 0; }
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-bottom: 18px; }
+    .control { min-height: 42px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 11px; color: var(--navy); background: #fff; font-weight: 800; cursor: pointer; box-shadow: 0 5px 18px rgba(16,42,67,.06); }
+    .control:hover { border-color: #8eb4ca; background: #f7fbfd; }
+    .search { flex: 1 1 260px; max-width: 420px; min-height: 42px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
+    .summary-grid { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 14px; margin-bottom: 26px; }
+    .metric { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: 0 8px 25px rgba(16,42,67,.06); }
+    .metric-value { display: block; color: var(--navy); font-size: 2rem; font-weight: 900; line-height: 1; }
+    .metric-label { display: block; margin-top: 8px; color: var(--muted); font-size: .86rem; font-weight: 700; }
+    .metric.strong { border-top: 4px solid var(--green); } .metric.partial { border-top: 4px solid var(--amber); }
+    .metric.gap { border-top: 4px solid var(--red); } .metric.question { border-top: 4px solid var(--violet); }
+    section { scroll-margin-top: 24px; margin-bottom: 22px; padding: clamp(22px,4vw,36px); border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.96); box-shadow: var(--shadow); }
+    section h2 { margin: 0 0 20px; color: var(--navy); font-size: clamp(1.35rem,3vw,2rem); letter-spacing: -.025em; }
+    section h3 { color: var(--navy); }
+    .section-kicker { display: block; margin-bottom: 4px; color: var(--cyan); font-size: .74rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+    .lead { font-size: 1.08rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; }
+    .grid-2 > *, .grid-3 > *, .card, details { min-width: 0; }
+    .card { padding: 19px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+    .card h3 { margin-top: 0; }
+    .callout { padding: 16px 18px; border-left: 4px solid var(--cyan); border-radius: 8px; background: #edf8f8; }
+    .summary-guide { margin-bottom: 22px; }
+    .chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin: 2px 4px 2px 0; padding: 4px 9px; border-radius: 999px; font-size: .78rem; font-weight: 850; overflow-wrap: anywhere; }
+    .fact,.strong-label { color: #155d45; background: #dff4e9; } .inference { color: #6d4a00; background: #fff0c7; }
+    .recommendation { color: #104f78; background: #dff1fc; } .confirm,.gap-label { color: #6e3030; background: #fde5e5; }
+    .partial-label { color: #7a4b00; background: #ffedc2; }
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 13px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; background: #fff; }
+    th,td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--navy); background: #edf3f7; font-size: .82rem; letter-spacing: .02em; }
+    tr:last-child td { border-bottom: 0; }
+    details.qa-card { margin: 12px 0; border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
+    details.qa-card[open] { border-color: #9fc5d5; box-shadow: 0 8px 24px rgba(16,42,67,.07); }
+    details.qa-card summary { position: relative; padding: 18px 52px 18px 18px; color: var(--navy); background: #f8fafc; cursor: pointer; font-weight: 900; list-style: none; }
+    details.qa-card summary::-webkit-details-marker { display: none; }
+    details.qa-card summary::after { content: "+"; position: absolute; right: 18px; top: 13px; color: var(--cyan); font-size: 1.45rem; }
+    details.qa-card[open] summary::after { content: "−"; }
+    .qa-body { padding: 8px 20px 20px; }
+    .answer { margin: 14px 0; padding: 18px; border-radius: 12px; background: #f2f8fb; }
+    .hidden-by-search { display: none !important; }
+    .empty-search { display: none; padding: 14px; color: var(--muted); text-align: center; }
+    .checklist { padding-left: 0; list-style: none; }
+    .checklist li { position: relative; margin: 8px 0; padding-left: 30px; }
+    .checklist li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 21px; height: 21px; color: #fff; background: var(--green); border-radius: 50%; font-size: .75rem; font-weight: 900; text-align: center; line-height: 21px; }
+    .footer { max-width: 1320px; margin: -28px auto 0; padding: 0 20px 40px; color: var(--muted); font-size: .82rem; text-align: center; }
+    @media (max-width:980px) {
+      .shell { grid-template-columns: minmax(0,1fr); } .side { position: static; width: 100%; max-width: 100%; min-width: 0; max-height: none; overflow-x: auto; }
+      .side nav { display: flex; width: max-content; min-width: 100%; gap: 4px; } .side a { white-space: nowrap; }
+      .summary-grid { grid-template-columns: repeat(2,minmax(0,1fr)); } .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width:620px) {
+      .hero { padding: 36px 20px; } .shell { padding: 18px 12px 48px; } section { padding: 20px 16px; border-radius: 14px; }
+      .summary-grid,.grid-2 { grid-template-columns: 1fr; } .toolbar { justify-content: stretch; } .control { flex: 1 1 auto; }
+      .search { max-width: none; flex-basis: 100%; }
+    }
+    @media print {
+      body { background: #fff; font-size: 10.5pt; } .hero { padding: 24px; color: #000; background: #fff; border-bottom: 2px solid #000; }
+      .hero::after,.side,.toolbar,.footer { display: none !important; } .hero .eyebrow,.hero .subtitle { color: #222; }
+      .hero .meta span { color: #000; border-color: #888; background: transparent; } .shell { display: block; max-width: none; padding: 18px 0; }
+      main { width: 100%; } .summary-grid { grid-template-columns: repeat(4,1fr); } section,.metric,details.qa-card { box-shadow: none; break-inside: avoid; }
+      section { border-color: #bbb; } details.qa-card > * { display: block !important; } details.qa-card summary::after { display: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">Evidence-grounded interview brief</p>
+    <h1>{{Company}} — {{Role}}</h1>
+    <p class="subtitle">{{One-sentence role objective and candidate positioning}}</p>
+    <div class="meta" aria-label="Report metadata">
+      <span>Generated: {{date}}</span><span>Material completeness: {{completeness}}</span>
+      <span>Interview language: {{interview language}}</span><span>Report language: English</span><span>Resume version: {{resume version}}</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="side" aria-label="Section navigation">
+      <nav>
+        <a href="#overview">Role profile</a><a href="#match">Match matrix</a><a href="#risks">Strengths & risks</a>
+        <a href="#introductions">Introductions</a><a href="#stories">Story bank</a><a href="#questions">Core Q&amp;A</a>
+        <a href="#deep-dive">Deep dives</a><a href="#reverse">Questions to ask</a><a href="#plan">Preparation plan</a>
+        <a href="#cheat-sheet">Cheat sheet</a><a href="#evidence">Evidence</a><a href="#confirmations">To confirm</a><a href="#integrity">Integrity check</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="toolbar" aria-label="Report actions">
+        <input id="question-search" class="search" type="search" placeholder="Search questions, answers, or evidence IDs" aria-label="Search core questions">
+        <button class="control" id="expand-all" type="button">Expand all Q&amp;A</button>
+        <button class="control" id="collapse-all" type="button">Collapse all Q&amp;A</button>
+        <button class="control" id="print-report" type="button">Print / Save PDF</button>
+      </div>
+
+      <div class="summary-grid" aria-label="Summary counts">
+        <article class="metric strong"><span class="metric-value">{{strong match count}}</span><span class="metric-label">Strong matches</span></article>
+        <article class="metric partial"><span class="metric-value">{{partial match count}}</span><span class="metric-label">Partial matches</span></article>
+        <article class="metric gap"><span class="metric-value">{{evidence gap count}}</span><span class="metric-label">Evidence gaps</span></article>
+        <article class="metric question"><span class="metric-value">{{high-priority question count}}</span><span class="metric-label">High-priority questions</span></article>
+      </div>
+      <div class="callout summary-guide" aria-label="Evidence label guide"><span class="chip fact">[JD Fact | JD-xx]</span><span class="chip fact">[Resume Fact | CV-xx]</span><span class="chip inference">[Inference | basis: …]</span><span class="chip recommendation">[Recommendation | basis: …]</span><span class="chip confirm">[To confirm]</span></div>
+
+      <section id="overview">
+        <span class="section-kicker">01 / Role profile</span><h2>Role profile</h2><p class="lead">{{role objective}}</p>
+        <div class="grid-2"><article class="card"><h3>Core responsibilities and capabilities</h3>{{core responsibilities and capabilities}}</article><article class="card"><h3>Likely interview focus</h3>{{likely interview focus}}</article></div>
+        <div class="callout"><strong>Language configuration:</strong> JD {{JD language}} · Resume {{resume language}} · Interview {{interview language}} · Answer mode {{answer mode}}</div>
+      </section>
+
+      <section id="match">
+        <span class="section-kicker">02 / Role–resume fit</span><h2>Role–resume match matrix</h2>
+        <div class="table-wrap"><table><thead><tr><th>Role requirement</th><th>Importance</th><th>Resume evidence</th><th>Match</th><th>Interview strategy</th></tr></thead>
+          <tbody><tr><td>{{requirement}}</td><td>{{high/medium/low}}</td><td>{{evidence ID}}</td><td><span class="chip strong-label">{{strong/partial/no evidence/to confirm}}</span></td><td>{{strategy}}</td></tr><!-- Duplicate rows for actual requirements; remove this comment from the final output. --></tbody>
+        </table></div>
+      </section>
+
+      <section id="risks">
+        <span class="section-kicker">03 / Strengths &amp; risks</span><h2>Strengths, gaps, and risks</h2>
+        <div class="grid-3"><article class="card"><h3>Core strengths</h3>{{core strengths}}</article><article class="card"><h3>Evidence gaps</h3>{{evidence gaps}}</article><article class="card"><h3>High-risk follow-ups</h3>{{high-risk follow-ups}}</article></div>
+      </section>
+
+      <section id="introductions">
+        <span class="section-kicker">04 / Introductions</span><h2>Introductions</h2>
+        <div class="grid-3"><article class="card"><h3>30 seconds</h3>{{30-second answer}}</article><article class="card"><h3>90 seconds</h3>{{90-second answer}}</article><article class="card"><h3>Three minutes</h3>{{three-minute answer}}</article></div>
+      </section>
+
+      <section id="stories">
+        <span class="section-kicker">05 / Story bank</span><h2>Candidate story bank</h2>
+        <div class="grid-2">
+          <article class="card" data-search><h3>{{story title}}</h3><p><span class="chip fact">[Resume Fact | {{CV-ID}}]</span></p>
+            <p><strong>Questions supported:</strong> {{question types}}</p><p><strong>Situation and objective:</strong> {{situation and objective}}</p>
+            <p><strong>Individual actions:</strong> {{individual actions}}</p><p><strong>Result and learning:</strong> {{result and learning}}</p>
+            <p><span class="chip confirm">[To confirm]</span> {{missing details}}</p>
+          </article><!-- Duplicate story cards; remove this comment from the final output. -->
+        </div>
+      </section>
+
+      <section id="questions">
+        <span class="section-kicker">06 / Core Q&amp;A</span><h2>Core interview questions and suggested answers</h2>
+        <p>Use the search field to filter questions, answers, or evidence IDs. Practice high-priority questions first.</p>
+        <details class="qa-card" data-search open>
+          <summary>Q1 | {{question}}</summary>
+          <div class="qa-body">
+            <p><span class="chip recommendation">High priority</span><span class="chip fact">{{ready to practice/practice after confirmation/knowledge reference}}</span></p>
+            <p><strong>Interviewer intent:</strong> <span class="chip inference">[Inference | basis: {{basis}}]</span> {{intent}}</p>
+            <p><strong>Evidence:</strong> {{JD-ID}}; {{CV-ID}}</p>
+            <div class="answer"><strong>Suggested answer</strong>{{first-person answer}}</div>
+            <p><strong>Follow-ups:</strong></p><ol><li>{{follow-up one}}</li><li>{{follow-up two}}</li></ol>
+            <p><strong>Answer risk:</strong> <span class="chip recommendation">[Recommendation | basis: {{evidence boundary}}]</span> {{risk}}</p>
+            <p><span class="chip confirm">[To confirm]</span> {{missing information or “none”}}</p>
+          </div>
+        </details><!-- Duplicate Q&A blocks by priority; remove this comment from the final output. -->
+        <p class="empty-search" id="empty-search">No core questions match this search.</p>
+      </section>
+
+      <section id="deep-dive">
+        <span class="section-kicker">07 / Deep dives</span><h2>Project, professional, and pressure interviews</h2>
+        <div class="grid-3"><article class="card"><h3>Project deep dives</h3>{{project deep dives}}</article><article class="card"><h3>Professional or technical preparation</h3>{{professional or technical preparation}}</article><article class="card"><h3>Behavioral and pressure questions</h3>{{behavioral and pressure questions}}</article></div>
+      </section>
+
+      <section id="reverse">
+        <span class="section-kicker">08 / Interview strategy</span><h2>Questions to ask and mock interview</h2>
+        <div class="grid-2"><article class="card"><h3>Questions for the interviewer</h3>{{questions for the interviewer}}</article><article class="card"><h3>Mock interview script</h3>{{mock interview script}}</article></div>
+      </section>
+
+      <section id="plan">
+        <span class="section-kicker">09 / Preparation plan</span><h2>Preparation plan</h2>
+        <div class="table-wrap"><table><thead><tr><th>Time</th><th>Task</th><th>Deliverable</th><th>Completion standard</th></tr></thead><tbody><tr><td>{{date/time}}</td><td>{{task}}</td><td>{{deliverable}}</td><td>{{standard}}</td></tr></tbody></table></div>
+      </section>
+
+      <section id="cheat-sheet">
+        <span class="section-kicker">10 / Last-minute brief</span><h2>One-page interview cheat sheet</h2>
+        <div class="grid-2"><article class="card"><h3>What the role values most</h3>{{three priorities}}</article><article class="card"><h3>My strongest evidence</h3>{{three evidence points}}</article><article class="card"><h3>Stories I must tell</h3>{{three stories}}</article><article class="card"><h3>Risks and questions to ask</h3>{{risks and questions}}</article></div>
+      </section>
+
+      <section id="evidence">
+        <span class="section-kicker">11 / Evidence ledger</span><h2>Evidence ledger and bilingual terminology</h2>
+        <h3>Evidence ledger</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Source</th><th>Original language</th><th>Summary</th><th>Use</th><th>Status</th></tr></thead><tbody><tr><td>{{ID}}</td><td>{{source}}</td><td>{{language}}</td><td>{{summary}}</td><td>{{use}}</td><td>{{status}}</td></tr></tbody></table></div>
+        <h3>Bilingual terminology</h3><div class="table-wrap"><table><thead><tr><th>Original</th><th>Target-language expression</th><th>Evidence ID</th><th>Notes</th></tr></thead><tbody><tr><td>{{term}}</td><td>{{expression}}</td><td>{{ID}}</td><td>{{scope or contribution boundary}}</td></tr></tbody></table></div>
+      </section>
+
+      <section id="confirmations"><span class="section-kicker">12 / To confirm</span><h2>To-confirm list</h2><ol>{{to-confirm list}}</ol></section>
+
+      <section id="integrity">
+        <span class="section-kicker">13 / Integrity check</span><h2>Final integrity check</h2>
+        <ul class="checklist"><li>Every factual claim has a source label and evidence ID.</li><li>Individual contribution and team results are not overstated.</li><li>Numbers, dates, tools, and results trace back to the supplied materials.</li><li>Every inference and recommendation is explicitly labeled.</li><li>Every missing detail remains marked [To confirm].</li><li>Cross-language content preserves evidence IDs, numbers, units, and contribution boundaries.</li></ul>
+        <p><strong>Job source:</strong> <a href="{{job source URL}}" rel="noreferrer">{{job source label}}</a></p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">This report is based only on the supplied materials. The candidate should verify every unconfirmed item before the interview.</footer>
+
+  <script>
+    (() => {
+      const cards = [...document.querySelectorAll('#questions details[data-search]')];
+      const search = document.getElementById('question-search');
+      const empty = document.getElementById('empty-search');
+      function filterQuestions() {
+        const query = search.value.trim().toLocaleLowerCase();
+        let visible = 0;
+        cards.forEach((card) => {
+          const matches = !query || card.textContent.toLocaleLowerCase().includes(query);
+          card.classList.toggle('hidden-by-search', !matches);
+          if (matches) visible += 1;
+        });
+        empty.style.display = visible ? 'none' : 'block';
+      }
+      search.addEventListener('input', filterQuestions);
+      document.getElementById('expand-all').addEventListener('click', () => cards.forEach((card) => { card.open = true; }));
+      document.getElementById('collapse-all').addEventListener('click', () => cards.forEach((card) => { card.open = false; }));
+      document.getElementById('print-report').addEventListener('click', () => window.print());
+      let printState = [];
+      window.addEventListener('beforeprint', () => {
+        printState = cards.map((card) => card.open);
+        cards.forEach((card) => { card.open = true; });
+      });
+      window.addEventListener('afterprint', () => cards.forEach((card, index) => { card.open = printState[index]; }));
+      const links = [...document.querySelectorAll('.side a')];
+      const sections = links.map((link) => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          links.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      sections.forEach((section) => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>
