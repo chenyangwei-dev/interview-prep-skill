@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "case_id": "bilingual-transition",
+  "description": "中英双语转型岗位：验证数字、证据 ID 和贡献级别跨语言一致。",
+  "inputs": {
+    "jd_language": "mixed",
+    "resume_language": "zh",
+    "interview_language": "bilingual",
+    "report_language": "zh"
+  },
+  "expected": {
+    "allowed_evidence_ids": ["JD-01", "JD-02", "CV-01", "CV-02", "USER-01"],
+    "required_evidence_ids": ["JD-01", "CV-01", "CV-02"],
+    "required_phrases": ["English answer", "中文理解与表达提示", "contributed to", "参与"],
+    "forbidden_phrases": ["led the migration", "主导迁移"],
+    "numeric_facts": [{"value": "18%", "evidence_id": "CV-02"}],
+    "bilingual_consistency": [
+      {"marker": "CV-01", "minimum_occurrences": 2},
+      {"marker": "18%", "minimum_occurrences": 2}
+    ],
+    "max_unresolved_confirmations": 0
+  },
+  "private_test_values": ["110101199001011234"],
+  "sample_output": "English answer: [Resume Fact | CV-01] I contributed to the migration; [Resume Fact | CV-02] the team metric improved by 18%. [JD Fact | JD-01] The role values cross-functional delivery. 中文理解与表达提示：[简历事实｜CV-01] 我参与迁移；[简历事实｜CV-02] 团队指标改善18%。"
+}

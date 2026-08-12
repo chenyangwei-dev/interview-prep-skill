@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "backend-engineer-zh",
+  "description": "中文后端岗位：验证证据引用、贡献边界和数字一致性。",
+  "inputs": {
+    "jd_language": "zh",
+    "resume_language": "zh",
+    "interview_language": "zh",
+    "report_language": "zh"
+  },
+  "expected": {
+    "allowed_evidence_ids": ["JD-01", "JD-02", "CV-01", "CV-02"],
+    "required_evidence_ids": ["JD-01", "CV-01", "CV-02"],
+    "required_phrases": ["[JD事实｜JD-01]", "[简历事实｜CV-01]", "参与"],
+    "forbidden_phrases": ["主导了系统重构", "独立负责全部架构"],
+    "numeric_facts": [{"value": "35%", "evidence_id": "CV-02"}],
+    "max_unresolved_confirmations": 0
+  },
+  "private_test_values": ["synthetic-person@example.invalid"],
+  "sample_output": "[JD事实｜JD-01] 岗位要求后端系统设计能力。[简历事实｜CV-01] 候选人参与服务拆分。[简历事实｜CV-02] 相关优化使团队指标改善35%。"
+}

@@ -48,11 +48,30 @@ description: Create evidence-grounded, personalized interview preparation report
 - 在生成问题、答案和追问前，读取 [references/question-framework.md](references/question-framework.md)。
 - 在为无证据或部分匹配项检索突击资料前，读取 [references/learning-resources-policy.md](references/learning-resources-policy.md)。
 - 在生成默认 HTML 交付物前，读取 [references/html-output-spec.md](references/html-output-spec.md)。
+- 在运行回归案例、建立检查点或通过统一入口执行时，读取 [references/evaluation-and-runner.md](references/evaluation-and-runner.md)。
 - `report_language` 为中文时复制并填充 [assets/interview-prep-template.zh.html](assets/interview-prep-template.zh.html)，为英文时复制并填充 [assets/interview-prep-template.en.html](assets/interview-prep-template.en.html)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
 - 用户明确要求 Markdown 时，分别使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md) 或 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。
 - 允许按岗位类型删减不适用章节，但不要删除证据、缺口、语言配置和待确认标记。
 
 ## 工作流
+
+### 可重复执行与检查点
+
+岗位和简历都能保存为本地文件时，优先通过统一入口建立运行目录：
+
+```bash
+python scripts/run_interview_prep.py start --job <job.json> --run-dir <workspace-temp/run>
+```
+
+退出码为 `3` 且显示 `WAITING_FOR_GENERATION` 时，读取运行目录中的 `generation-request.json`，继续执行本 Skill 的分析与 HTML 生成步骤。生成报告后恢复同一运行：
+
+```bash
+python scripts/run_interview_prep.py resume \
+  --run-dir <workspace-temp/run> \
+  --report <生成的报告.html>
+```
+
+不要把简历、岗位正文、模型输出或私人信息写入 `events.jsonl`。没有本地文件、仅进行模拟面试或只需简短问答时，不必为了使用运行器而制造额外文件。
 
 ### 1. 建立输入清单
 
@@ -184,6 +203,14 @@ description: Create evidence-grounded, personalized interview preparation report
 ```bash
 python scripts/validate_report.py <生成的报告.html>
 ```
+
+修改证据、语言、模板、问答或隐私规则后，运行脱敏回归案例：
+
+```bash
+python evals/run_eval.py --use-samples --require-all
+```
+
+这一步只验证评分器和已声明的不变量。需要验证真实生成质量时，为 `evals/cases/` 中的案例生成对应报告，再按 [references/evaluation-and-runner.md](references/evaluation-and-runner.md) 运行报告回归。不要将真实简历加入案例库。
 
 若环境具备浏览器或 HTML 截图能力，再打开报告检查首屏、导航、长表格、问答折叠、移动宽度和打印布局。修复可见问题后再交付，并在最终回复中提供 HTML 文件链接。
 

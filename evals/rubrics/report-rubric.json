@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "name": "interview-prep deterministic report rubric",
+  "blocking_metrics": [
+    "missing_evidence",
+    "unknown_evidence",
+    "forbidden_phrase",
+    "missing_numeric_fact",
+    "unlinked_numeric_fact",
+    "bilingual_inconsistency",
+    "pii_leak",
+    "too_many_unresolved"
+  ],
+  "principles": {
+    "evidence": "Every factual claim must resolve to an allowed JD, CV, or USER evidence ID.",
+    "contribution": "Do not strengthen participation into ownership or leadership.",
+    "language": "Bilingual answers preserve evidence IDs, numbers, dates, units, and contribution level.",
+    "privacy": "Reports and evaluation artifacts exclude unnecessary personal information.",
+    "honesty": "Unknown details remain explicit confirmation items rather than invented facts."
+  }
+}
