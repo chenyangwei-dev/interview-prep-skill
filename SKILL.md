@@ -14,10 +14,20 @@ description: Create evidence-grounded, personalized interview preparation report
 1. 接收岗位链接、粘贴的职位描述、网页截图或岗位 PDF。
 2. 接收 PDF、DOCX、Markdown、纯文本简历或用户粘贴的经历。
 3. 优先使用公开网页读取工具提取岗位链接；若页面需要登录、内容不完整或抓取失败，继续处理已获得的信息，同时请求用户粘贴完整职位描述。
-4. 使用适合文件格式的文档或 PDF 能力读取附件；保留原文件，不覆盖用户材料。
-5. 仅在岗位材料或简历缺失到无法建立基本匹配关系时提问。一次只索取最关键的缺失输入。
-6. 分别记录岗位、简历、目标面试和分析报告的语言；不要把任一输入语言自动当作最终面试语言。
-7. 用户未指定格式时输出单个自包含的可视化 HTML 文件。仅在用户明确要求 Markdown、纯文本或其他格式时切换。
+4. 对 PDF 和 DOCX 先生成标准化的中间 Markdown；保留原文件，不覆盖用户材料：
+
+   ```bash
+   python scripts/extract_pdf.py <resume.pdf> --output <workspace-temp/resume.extracted.md>
+   python scripts/extract_docx.py <resume.docx> --output <workspace-temp/resume.extracted.md>
+   ```
+
+   将中间文件放在临时工作目录，不提交到 Git，也不默认作为最终交付物。若输出已存在，先确认目标或显式使用 `--overwrite`。
+5. 将提取结果视为内容索引而不是版面真相。PDF 使用 `PDF-pNNN`，DOCX 使用 `DOCX-body-pNNNN` 或表格坐标作为来源定位；不要把这些位置 ID 替代 `CV-01` 等证据 ID。
+6. 使用对应的 PDF 或文档能力渲染并逐页检查原文件，重点确认双栏顺序、文本框、表格、图片文字、缺字和 OCR 告警。没有完成视觉检查时，在材料完整性说明中标记限制。
+7. 若 PDF 提取器报告依赖缺失、加密、无文本或 OCR 告警，使用 PDF 能力处理并保留告警；若 DOCX 包含修订、批注、绘图或文本框，使用文档能力复核，不把批注或已删除文字作为简历证据。
+8. 仅在岗位材料或简历缺失到无法建立基本匹配关系时提问。一次只索取最关键的缺失输入。
+9. 分别记录岗位、简历、目标面试和分析报告的语言；不要把任一输入语言自动当作最终面试语言。
+10. 用户未指定格式时输出单个自包含的可视化 HTML 文件。仅在用户明确要求 Markdown、纯文本或其他格式时切换。
 
 不要因为只有岗位链接而要求安装 LangChain。仅在用户明确要求构建独立应用、持久化知识库或复杂检索系统时讨论框架选型。
 
@@ -58,7 +68,7 @@ description: Create evidence-grounded, personalized interview preparation report
 - `CV-01`、`CV-02`：简历经历、项目、技能、成果或时间线。
 - `USER-01`：用户在对话中补充并明确确认的信息。
 
-为每条证据记录来源 ID、原始语言、简短释义和用途。跨语言输出继续使用相同证据 ID。不要大段复制网页或简历原文。
+为每条证据记录来源 ID、原始语言、简短释义、用途和中间 Markdown 中的位置 ID。跨语言输出继续使用相同证据 ID。不要大段复制网页或简历原文。
 
 ### 3. 分析岗位
 
@@ -166,6 +176,8 @@ description: Create evidence-grounded, personalized interview preparation report
 - 页面在桌面和移动宽度下可读，键盘可操作，打印时隐藏导航和交互控件。
 - 摘要数字与正文逐项计数一致，不使用无依据的百分比或评分。
 - 所有模板占位符已经替换，页面中没有残留 `{{...}}`。
+- PDF 或 DOCX 输入已经生成中间 Markdown，并检查提取告警、来源定位和非空内容。
+- PDF 或 DOCX 原文件已经完成逐页视觉检查；无法检查时已在报告中披露限制。
 
 生成后运行：
 
