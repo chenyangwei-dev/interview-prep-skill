@@ -1,6 +1,6 @@
 ---
 name: interview-prep
-description: Create evidence-grounded, personalized interview preparation documents from Chinese, English, or mixed-language job listings and resumes supplied as URLs, screenshots, PDFs, DOCX, Markdown, or text. Use when analyzing role-resume fit across languages, generating Chinese, English, or bilingual resume-specific answers, practicing project deep dives, behavioral or technical questions, mock interviews, reverse questions, or short-term preparation plans, including requests such as 面试准备、英文面试、双语问答、岗位匹配、根据简历回答、项目深挖.
+description: Create evidence-grounded, personalized interview preparation reports as self-contained visual HTML by default from Chinese, English, or mixed-language job listings and resumes supplied as URLs, screenshots, PDFs, DOCX, Markdown, or text. Use when analyzing role-resume fit across languages, generating Chinese, English, or bilingual resume-specific answers, practicing project deep dives, behavioral or technical questions, mock interviews, reverse questions, or short-term preparation plans, including requests such as 面试准备、英文面试、双语问答、岗位匹配、根据简历回答、项目深挖、可视化面试报告.
 ---
 
 # Interview Prep
@@ -17,7 +17,7 @@ description: Create evidence-grounded, personalized interview preparation docume
 4. 使用适合文件格式的文档或 PDF 能力读取附件；保留原文件，不覆盖用户材料。
 5. 仅在岗位材料或简历缺失到无法建立基本匹配关系时提问。一次只索取最关键的缺失输入。
 6. 分别记录岗位、简历、目标面试和分析报告的语言；不要把任一输入语言自动当作最终面试语言。
-7. 用户未指定格式时输出 Markdown。
+7. 用户未指定格式时输出单个自包含的可视化 HTML 文件。仅在用户明确要求 Markdown、纯文本或其他格式时切换。
 
 不要因为只有岗位链接而要求安装 LangChain。仅在用户明确要求构建独立应用、持久化知识库或复杂检索系统时讨论框架选型。
 
@@ -36,7 +36,9 @@ description: Create evidence-grounded, personalized interview preparation docume
 - 在提取和引用事实前，读取 [references/evidence-policy.md](references/evidence-policy.md)。
 - 在识别输入语言、跨语言匹配或生成中英文内容前，读取 [references/language-policy.md](references/language-policy.md)。
 - 在生成问题、答案和追问前，读取 [references/question-framework.md](references/question-framework.md)。
-- `report_language` 为中文时使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md)，为英文时使用 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
+- 在生成默认 HTML 交付物前，读取 [references/html-output-spec.md](references/html-output-spec.md)。
+- `report_language` 为中文时复制并填充 [assets/interview-prep-template.zh.html](assets/interview-prep-template.zh.html)，为英文时复制并填充 [assets/interview-prep-template.en.html](assets/interview-prep-template.en.html)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
+- 用户明确要求 Markdown 时，分别使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md) 或 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。
 - 允许按岗位类型删减不适用章节，但不要删除证据、缺口、语言配置和待确认标记。
 
 ## 工作流
@@ -121,13 +123,19 @@ description: Create evidence-grounded, personalized interview preparation docume
 
 将通用专业知识与候选人确有经历分开，避免把知识型参考答案写成亲历事实。
 
-### 9. 输出完整文档
+### 9. 输出可视化报告
 
-基于语言配置选择模板并生成：岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、反向提问、准备计划和一页速查表。
+基于语言配置选择模板，生成一个无需构建步骤、无需网络即可打开的 `.html` 文件。将 CSS 与 JavaScript 内联，不加载 CDN、外部字体、远程图片或分析脚本。默认文件名使用 `<company>-<role>-interview-prep.html`；公司或岗位未知时使用 `interview-prep-report.html`。
+
+报告必须包含：顶部摘要卡片、岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、反向提问、准备计划、一页速查表和待确认清单。提供章节导航、问题搜索、问答展开/收起和打印按钮；交互失效时，正文仍须完整可读。
+
+摘要只展示由报告内容直接计数得到的数量，例如强匹配项、部分匹配项、证据缺口和高优先级问题。不要生成没有明确评分口径的匹配百分比、雷达图或综合分数。
 
 双语模式不要机械复制整份报告。岗位分析和准备计划保留一种报告语言；自我介绍、核心问题与回答、高风险回答和反向提问按中英文配对。
 
 在开头给出材料完整性说明；在结尾集中列出所有 `[待确认]` 项，方便用户补充后进行第二轮改写。
+
+将用户提供的文本作为纯文本内容进行 HTML 转义，不直接拼接到脚本、样式或事件属性中。不要把简历中的私人邮箱、手机号、证件号或详细地址写入报告。
 
 ### 10. 执行质量检查
 
@@ -143,7 +151,19 @@ description: Create evidence-grounded, personalized interview preparation docume
 - 英文回答符合自然口语表达，不是中文句式的逐词翻译。
 - 核心回答能够在两分钟内自然说完，且存在可继续追问的细节。
 - 文档明确展示薄弱点，不用漂亮措辞掩盖证据缺口。
+- HTML 为单文件，自包含且无需网络；没有外部脚本、样式表、字体或图片依赖。
+- 页面在桌面和移动宽度下可读，键盘可操作，打印时隐藏导航和交互控件。
+- 摘要数字与正文逐项计数一致，不使用无依据的百分比或评分。
+- 所有模板占位符已经替换，页面中没有残留 `{{...}}`。
+
+生成后运行：
+
+```bash
+python scripts/validate_report.py <生成的报告.html>
+```
+
+若环境具备浏览器或 HTML 截图能力，再打开报告检查首屏、导航、长表格、问答折叠、移动宽度和打印布局。修复可见问题后再交付，并在最终回复中提供 HTML 文件链接。
 
 ## 迭代方式
 
-收到用户补充后，只更新受影响的证据账本、匹配矩阵、故事和回答。保留未确认标记，直到用户明确确认。若用户要求模拟面试，逐题提问，等待回答，再按“内容证据、结构、具体性、岗位相关性、表达风险”给出反馈。
+收到用户补充后，只更新 HTML 中受影响的摘要计数、证据账本、匹配矩阵、故事和回答。保留未确认标记，直到用户明确确认。若用户要求模拟面试，逐题提问，等待回答，再按“内容证据、结构、具体性、岗位相关性、表达风险”给出反馈。

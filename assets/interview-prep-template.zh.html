@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>{{公司}}｜{{职位}}面试准备</title>
+  <style>
+    :root {
+      --ink: #182230;
+      --muted: #5f6b7a;
+      --line: #dce3ea;
+      --surface: #ffffff;
+      --soft: #f4f7fa;
+      --navy: #102a43;
+      --blue: #1267a5;
+      --cyan: #0b8093;
+      --green: #1f7a5a;
+      --amber: #a45f08;
+      --red: #b33a3a;
+      --violet: #6c4ccf;
+      --shadow: 0 16px 44px rgba(16, 42, 67, .10);
+      --radius: 18px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 10% 0%, rgba(11, 128, 147, .10), transparent 28rem),
+        linear-gradient(180deg, #f7fafc 0, #edf3f7 100%);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+      line-height: 1.65;
+    }
+
+    a { color: var(--blue); }
+    button, input { font: inherit; }
+    button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visible {
+      outline: 3px solid rgba(18, 103, 165, .35);
+      outline-offset: 3px;
+    }
+
+    .hero {
+      color: #fff;
+      background:
+        linear-gradient(120deg, rgba(16, 42, 67, .98), rgba(11, 128, 147, .92)),
+        var(--navy);
+      padding: 48px max(24px, calc((100vw - 1280px) / 2));
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: "";
+      position: absolute;
+      width: 360px;
+      height: 360px;
+      right: -120px;
+      top: -180px;
+      border: 1px solid rgba(255, 255, 255, .24);
+      border-radius: 50%;
+      box-shadow: 0 0 0 56px rgba(255, 255, 255, .04), 0 0 0 112px rgba(255, 255, 255, .03);
+    }
+    .eyebrow { margin: 0 0 10px; color: #91e6e5; font-size: .78rem; font-weight: 800; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { margin: 0; max-width: 900px; font-size: clamp(2rem, 5vw, 4.4rem); line-height: 1.08; letter-spacing: -.04em; }
+    .subtitle { max-width: 800px; margin: 18px 0 0; color: #d9edf2; font-size: 1.05rem; }
+    .meta { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 26px; }
+    .meta span { padding: 7px 12px; border: 1px solid rgba(255,255,255,.24); border-radius: 999px; background: rgba(255,255,255,.08); font-size: .88rem; }
+
+    .shell { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 28px; max-width: 1320px; margin: 0 auto; padding: 28px 20px 64px; }
+    .side { position: sticky; top: 18px; align-self: start; max-height: calc(100vh - 36px); overflow: auto; }
+    .side nav { padding: 14px; border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.90); box-shadow: var(--shadow); backdrop-filter: blur(14px); }
+    .side a { display: block; padding: 9px 11px; color: var(--muted); border-radius: 10px; font-size: .88rem; font-weight: 700; text-decoration: none; }
+    .side a:hover, .side a.active { color: var(--navy); background: #e9f3f7; }
+    main { min-width: 0; }
+
+    .toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: flex-end; margin-bottom: 18px; }
+    .control { min-height: 42px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 11px; color: var(--navy); background: #fff; font-weight: 800; cursor: pointer; box-shadow: 0 5px 18px rgba(16,42,67,.06); }
+    .control:hover { border-color: #8eb4ca; background: #f7fbfd; }
+    .search { flex: 1 1 260px; max-width: 420px; min-height: 42px; padding: 9px 14px; border: 1px solid var(--line); border-radius: 11px; background: #fff; }
+
+    .summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; margin-bottom: 26px; }
+    .metric { padding: 20px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); box-shadow: 0 8px 25px rgba(16,42,67,.06); }
+    .metric-value { display: block; color: var(--navy); font-size: 2rem; font-weight: 900; line-height: 1; }
+    .metric-label { display: block; margin-top: 8px; color: var(--muted); font-size: .86rem; font-weight: 700; }
+    .metric.strong { border-top: 4px solid var(--green); }
+    .metric.partial { border-top: 4px solid var(--amber); }
+    .metric.gap { border-top: 4px solid var(--red); }
+    .metric.question { border-top: 4px solid var(--violet); }
+
+    section { scroll-margin-top: 24px; margin-bottom: 22px; padding: clamp(22px, 4vw, 36px); border: 1px solid var(--line); border-radius: var(--radius); background: rgba(255,255,255,.96); box-shadow: var(--shadow); }
+    section h2 { margin: 0 0 20px; color: var(--navy); font-size: clamp(1.35rem, 3vw, 2rem); letter-spacing: -.025em; }
+    section h3 { color: var(--navy); }
+    .section-kicker { display: block; margin-bottom: 4px; color: var(--cyan); font-size: .74rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+    .lead { font-size: 1.08rem; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+    .grid-2 > *, .grid-3 > *, .card, details { min-width: 0; }
+    .card { padding: 19px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+    .card h3 { margin-top: 0; }
+    .callout { padding: 16px 18px; border-left: 4px solid var(--cyan); border-radius: 8px; background: #edf8f8; }
+    .summary-guide { margin-bottom: 22px; }
+
+    .chip { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; margin: 2px 4px 2px 0; padding: 4px 9px; border-radius: 999px; font-size: .78rem; font-weight: 850; overflow-wrap: anywhere; }
+    .fact { color: #155d45; background: #dff4e9; }
+    .inference { color: #6d4a00; background: #fff0c7; }
+    .recommendation { color: #104f78; background: #dff1fc; }
+    .confirm { color: #6e3030; background: #fde5e5; }
+    .strong-label { color: #155d45; background: #dff4e9; }
+    .partial-label { color: #7a4b00; background: #ffedc2; }
+    .gap-label { color: #862f2f; background: #fde5e5; }
+
+    .table-wrap { width: 100%; overflow-x: auto; border: 1px solid var(--line); border-radius: 13px; }
+    table { width: 100%; border-collapse: collapse; min-width: 720px; background: #fff; }
+    th, td { padding: 13px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+    th { color: var(--navy); background: #edf3f7; font-size: .82rem; letter-spacing: .02em; }
+    tr:last-child td { border-bottom: 0; }
+
+    details.qa-card { margin: 12px 0; border: 1px solid var(--line); border-radius: 14px; background: #fff; overflow: hidden; }
+    details.qa-card[open] { border-color: #9fc5d5; box-shadow: 0 8px 24px rgba(16,42,67,.07); }
+    details.qa-card summary { padding: 18px 52px 18px 18px; color: var(--navy); background: #f8fafc; cursor: pointer; font-weight: 900; position: relative; list-style: none; }
+    details.qa-card summary::-webkit-details-marker { display: none; }
+    details.qa-card summary::after { content: "+"; position: absolute; right: 18px; top: 13px; color: var(--cyan); font-size: 1.45rem; }
+    details.qa-card[open] summary::after { content: "−"; }
+    .qa-body { padding: 8px 20px 20px; }
+    .answer { margin: 14px 0; padding: 18px; border-radius: 12px; background: #f2f8fb; }
+    .hidden-by-search { display: none !important; }
+    .empty-search { display: none; padding: 14px; color: var(--muted); text-align: center; }
+
+    .checklist { padding-left: 0; list-style: none; }
+    .checklist li { margin: 8px 0; padding-left: 30px; position: relative; }
+    .checklist li::before { content: "✓"; position: absolute; left: 0; top: 1px; width: 21px; height: 21px; color: #fff; background: var(--green); border-radius: 50%; font-size: .75rem; font-weight: 900; text-align: center; line-height: 21px; }
+    .footer { max-width: 1320px; margin: -28px auto 0; padding: 0 20px 40px; color: var(--muted); font-size: .82rem; text-align: center; }
+
+    @media (max-width: 980px) {
+      .shell { grid-template-columns: minmax(0, 1fr); }
+      .side { position: static; width: 100%; max-width: 100%; min-width: 0; max-height: none; overflow-x: auto; }
+      .side nav { display: flex; width: max-content; min-width: 100%; gap: 4px; }
+      .side a { white-space: nowrap; }
+      .summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .grid-3 { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .hero { padding: 36px 20px; }
+      .shell { padding: 18px 12px 48px; }
+      section { padding: 20px 16px; border-radius: 14px; }
+      .summary-grid, .grid-2 { grid-template-columns: 1fr; }
+      .toolbar { justify-content: stretch; }
+      .control { flex: 1 1 auto; }
+      .search { max-width: none; flex-basis: 100%; }
+    }
+    @media print {
+      body { background: #fff; font-size: 10.5pt; }
+      .hero { padding: 24px; color: #000; background: #fff; border-bottom: 2px solid #000; }
+      .hero::after, .side, .toolbar, .footer { display: none !important; }
+      .hero .eyebrow, .hero .subtitle { color: #222; }
+      .hero .meta span { color: #000; border-color: #888; background: transparent; }
+      .shell { display: block; max-width: none; padding: 18px 0; }
+      main { width: 100%; }
+      .summary-grid { grid-template-columns: repeat(4, 1fr); }
+      section, .metric, details.qa-card { box-shadow: none; break-inside: avoid; }
+      section { border-color: #bbb; }
+      details.qa-card > * { display: block !important; }
+      details.qa-card summary::after { display: none; }
+      a { color: inherit; text-decoration: none; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <p class="eyebrow">Evidence-grounded interview brief</p>
+    <h1>{{公司}}｜{{职位}}</h1>
+    <p class="subtitle">{{一句话岗位目标与候选人定位}}</p>
+    <div class="meta" aria-label="报告元数据">
+      <span>生成日期：{{日期}}</span>
+      <span>材料完整性：{{完整性}}</span>
+      <span>面试语言：{{面试语言}}</span>
+      <span>报告语言：中文</span>
+      <span>简历版本：{{简历版本}}</span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="side" aria-label="章节导航">
+      <nav>
+        <a href="#overview">岗位画像</a>
+        <a href="#match">匹配矩阵</a>
+        <a href="#risks">优势与风险</a>
+        <a href="#introductions">自我介绍</a>
+        <a href="#stories">故事库</a>
+        <a href="#questions">核心问答</a>
+        <a href="#deep-dive">专项深挖</a>
+        <a href="#reverse">反向提问</a>
+        <a href="#plan">准备计划</a>
+        <a href="#cheat-sheet">临场速查</a>
+        <a href="#evidence">证据账本</a>
+        <a href="#confirmations">待确认</a>
+        <a href="#integrity">真实性检查</a>
+      </nav>
+    </aside>
+
+    <main>
+      <div class="toolbar" aria-label="报告操作">
+        <input id="question-search" class="search" type="search" placeholder="搜索问题、回答或证据 ID" aria-label="搜索核心问答">
+        <button class="control" id="expand-all" type="button">展开全部问答</button>
+        <button class="control" id="collapse-all" type="button">收起全部问答</button>
+        <button class="control" id="print-report" type="button">打印 / 导出 PDF</button>
+      </div>
+
+      <div class="summary-grid" aria-label="摘要计数">
+        <article class="metric strong"><span class="metric-value">{{强匹配数量}}</span><span class="metric-label">强匹配项</span></article>
+        <article class="metric partial"><span class="metric-value">{{部分匹配数量}}</span><span class="metric-label">部分匹配项</span></article>
+        <article class="metric gap"><span class="metric-value">{{证据缺口数量}}</span><span class="metric-label">证据缺口</span></article>
+        <article class="metric question"><span class="metric-value">{{高优先级问题数量}}</span><span class="metric-label">高优先级问题</span></article>
+      </div>
+      <div class="callout summary-guide" aria-label="证据标签说明"><span class="chip fact">[JD事实｜JD-xx]</span><span class="chip fact">[简历事实｜CV-xx]</span><span class="chip inference">[推断｜依据：…]</span><span class="chip recommendation">[建议｜依据：…]</span><span class="chip confirm">[待确认]</span></div>
+
+      <section id="overview">
+        <span class="section-kicker">01 / Role profile</span>
+        <h2>岗位画像</h2>
+        <p class="lead">{{岗位目标}}</p>
+        <div class="grid-2">
+          <article class="card"><h3>核心职责与能力</h3>{{核心职责与能力}}</article>
+          <article class="card"><h3>可能的面试关注点</h3>{{面试关注点}}</article>
+        </div>
+        <div class="callout"><strong>语言配置：</strong>岗位 {{岗位语言}} · 简历 {{简历语言}} · 面试 {{面试语言}} · 回答模式 {{回答模式}}</div>
+      </section>
+
+      <section id="match">
+        <span class="section-kicker">02 / Role–resume fit</span>
+        <h2>岗位—简历匹配矩阵</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>岗位要求</th><th>重要性</th><th>简历证据</th><th>匹配等级</th><th>面试策略</th></tr></thead>
+            <tbody>
+              <tr><td>{{岗位要求}}</td><td>{{高/中/低}}</td><td>{{证据ID}}</td><td><span class="chip strong-label">{{强/部分/无证据/待确认}}</span></td><td>{{策略}}</td></tr>
+              <!-- 按实际岗位要求复制表格行；最终输出删除本注释。 -->
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="risks">
+        <span class="section-kicker">03 / Strengths & risks</span>
+        <h2>核心优势、缺口与风险</h2>
+        <div class="grid-3">
+          <article class="card"><h3>核心优势</h3>{{核心优势}}</article>
+          <article class="card"><h3>证据缺口</h3>{{证据缺口}}</article>
+          <article class="card"><h3>高风险追问</h3>{{高风险追问}}</article>
+        </div>
+      </section>
+
+      <section id="introductions">
+        <span class="section-kicker">04 / Introductions</span>
+        <h2>自我介绍</h2>
+        <div class="grid-3">
+          <article class="card"><h3>30 秒</h3>{{30秒回答}}</article>
+          <article class="card"><h3>90 秒</h3>{{90秒回答}}</article>
+          <article class="card"><h3>3 分钟</h3>{{3分钟回答}}</article>
+        </div>
+      </section>
+
+      <section id="stories">
+        <span class="section-kicker">05 / Story bank</span>
+        <h2>候选人故事库</h2>
+        <div class="grid-2">
+          <article class="card" data-search>
+            <h3>{{故事标题}}</h3>
+            <p><span class="chip fact">[简历事实｜{{CV-ID}}]</span></p>
+            <p><strong>适用问题：</strong>{{问题类型}}</p>
+            <p><strong>背景与目标：</strong>{{背景与目标}}</p>
+            <p><strong>个人行动：</strong>{{个人行动}}</p>
+            <p><strong>结果与复盘：</strong>{{结果与复盘}}</p>
+            <p><span class="chip confirm">[待确认]</span> {{缺失细节}}</p>
+          </article>
+          <!-- 复制故事卡片；最终输出删除本注释。 -->
+        </div>
+      </section>
+
+      <section id="questions">
+        <span class="section-kicker">06 / Core Q&A</span>
+        <h2>核心面试问题与参考回答</h2>
+        <p>使用搜索框筛选问题、回答或证据 ID。先练习高优先级问题，再补充待确认信息。</p>
+
+        <details class="qa-card" data-search open>
+          <summary>Q1｜{{问题}}</summary>
+          <div class="qa-body">
+            <p><span class="chip recommendation">高优先级</span><span class="chip fact">{{可直接练习/补充后练习/知识型参考}}</span></p>
+            <p><strong>面试官意图：</strong><span class="chip inference">[推断｜依据：{{依据}}]</span> {{意图}}</p>
+            <p><strong>证据：</strong>{{JD-ID}}；{{CV-ID}}</p>
+            <div class="answer"><strong>参考回答</strong>{{第一人称回答}}</div>
+            <p><strong>连续追问：</strong></p>
+            <ol><li>{{追问一}}</li><li>{{追问二}}</li></ol>
+            <p><strong>回答风险：</strong><span class="chip recommendation">[建议｜依据：{{证据边界}}]</span> {{风险}}</p>
+            <p><span class="chip confirm">[待确认]</span> {{待补充内容或“无”}}</p>
+          </div>
+        </details>
+        <!-- 按优先级复制问答块；最终输出删除本注释。 -->
+        <p class="empty-search" id="empty-search">没有匹配的核心问答。</p>
+      </section>
+
+      <section id="deep-dive">
+        <span class="section-kicker">07 / Deep dives</span>
+        <h2>项目、专业与压力面试</h2>
+        <div class="grid-3">
+          <article class="card"><h3>项目深挖</h3>{{项目深挖}}</article>
+          <article class="card"><h3>专业或技术专项</h3>{{专业技术专项}}</article>
+          <article class="card"><h3>行为与压力题</h3>{{行为压力题}}</article>
+        </div>
+      </section>
+
+      <section id="reverse">
+        <span class="section-kicker">08 / Interview strategy</span>
+        <h2>反向提问与模拟面试</h2>
+        <div class="grid-2">
+          <article class="card"><h3>向面试官提问</h3>{{反向提问}}</article>
+          <article class="card"><h3>模拟面试脚本</h3>{{模拟面试脚本}}</article>
+        </div>
+      </section>
+
+      <section id="plan">
+        <span class="section-kicker">09 / Preparation plan</span>
+        <h2>准备计划</h2>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>时间</th><th>任务</th><th>产出</th><th>完成标准</th></tr></thead>
+            <tbody><tr><td>{{日期/时段}}</td><td>{{任务}}</td><td>{{产出}}</td><td>{{标准}}</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="cheat-sheet">
+        <span class="section-kicker">10 / Last-minute brief</span>
+        <h2>一页临场速查表</h2>
+        <div class="grid-2">
+          <article class="card"><h3>岗位最看重的三件事</h3>{{三件事}}</article>
+          <article class="card"><h3>我最有力的三项证据</h3>{{三项证据}}</article>
+          <article class="card"><h3>三个必讲故事</h3>{{三个故事}}</article>
+          <article class="card"><h3>风险与反向提问</h3>{{风险与反向提问}}</article>
+        </div>
+      </section>
+
+      <section id="evidence">
+        <span class="section-kicker">11 / Evidence ledger</span>
+        <h2>证据账本与双语术语表</h2>
+        <h3>证据账本</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>ID</th><th>来源</th><th>原始语言</th><th>内容释义</th><th>用途</th><th>状态</th></tr></thead>
+            <tbody><tr><td>{{ID}}</td><td>{{来源}}</td><td>{{语言}}</td><td>{{释义}}</td><td>{{用途}}</td><td>{{状态}}</td></tr></tbody>
+          </table>
+        </div>
+        <h3>双语术语表</h3>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>原文</th><th>目标语言表达</th><th>证据 ID</th><th>备注</th></tr></thead>
+            <tbody><tr><td>{{原文}}</td><td>{{表达}}</td><td>{{ID}}</td><td>{{口径或贡献边界}}</td></tr></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="confirmations">
+        <span class="section-kicker">12 / To confirm</span>
+        <h2>待确认清单</h2>
+        <ol>{{待确认清单}}</ol>
+      </section>
+
+      <section id="integrity">
+        <span class="section-kicker">13 / Integrity check</span>
+        <h2>最终真实性检查</h2>
+        <ul class="checklist">
+          <li>每项事实都有来源标签和证据 ID。</li>
+          <li>没有扩大个人贡献或虚构团队成果。</li>
+          <li>数字、时间、工具和结果可回到材料。</li>
+          <li>所有推断和建议均已显式标注。</li>
+          <li>所有待补充内容仍保留 [待确认]。</li>
+          <li>跨语言版本保持相同证据 ID、数字、单位和贡献边界。</li>
+        </ul>
+        <p><strong>岗位来源：</strong><a href="{{岗位来源链接}}" rel="noreferrer">{{岗位来源显示文本}}</a></p>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">本报告仅依据已提供材料生成；所有未确认内容应在面试前由候选人核实。</footer>
+
+  <script>
+    (() => {
+      const cards = [...document.querySelectorAll('#questions details[data-search]')];
+      const search = document.getElementById('question-search');
+      const empty = document.getElementById('empty-search');
+
+      function filterQuestions() {
+        const query = search.value.trim().toLocaleLowerCase();
+        let visible = 0;
+        cards.forEach((card) => {
+          const matches = !query || card.textContent.toLocaleLowerCase().includes(query);
+          card.classList.toggle('hidden-by-search', !matches);
+          if (matches) visible += 1;
+        });
+        empty.style.display = visible ? 'none' : 'block';
+      }
+
+      search.addEventListener('input', filterQuestions);
+      document.getElementById('expand-all').addEventListener('click', () => cards.forEach((card) => { card.open = true; }));
+      document.getElementById('collapse-all').addEventListener('click', () => cards.forEach((card) => { card.open = false; }));
+      document.getElementById('print-report').addEventListener('click', () => window.print());
+      let printState = [];
+      window.addEventListener('beforeprint', () => {
+        printState = cards.map((card) => card.open);
+        cards.forEach((card) => { card.open = true; });
+      });
+      window.addEventListener('afterprint', () => cards.forEach((card, index) => { card.open = printState[index]; }));
+
+      const links = [...document.querySelectorAll('.side a')];
+      const sections = links.map((link) => document.querySelector(link.getAttribute('href'))).filter(Boolean);
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          links.forEach((link) => link.classList.toggle('active', link.getAttribute('href') === `#${entry.target.id}`));
+        });
+      }, { rootMargin: '-20% 0px -70% 0px' });
+      sections.forEach((section) => observer.observe(section));
+    })();
+  </script>
+</body>
+</html>
