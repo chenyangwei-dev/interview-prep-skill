@@ -1,6 +1,6 @@
 ---
 name: interview-prep
-description: Create evidence-grounded, personalized interview preparation documents from a job listing URL, pasted job description, screenshot or PDF, and a candidate resume in PDF, DOCX, Markdown, or text. Use when preparing for interviews, analyzing role-resume fit, generating resume-specific answers, practicing project deep dives, behavioral or technical questions, mock interviews, reverse questions, or short-term preparation plans, including requests such as 面试准备、岗位匹配、根据简历回答、项目深挖.
+description: Create evidence-grounded, personalized interview preparation documents from Chinese, English, or mixed-language job listings and resumes supplied as URLs, screenshots, PDFs, DOCX, Markdown, or text. Use when analyzing role-resume fit across languages, generating Chinese, English, or bilingual resume-specific answers, practicing project deep dives, behavioral or technical questions, mock interviews, reverse questions, or short-term preparation plans, including requests such as 面试准备、英文面试、双语问答、岗位匹配、根据简历回答、项目深挖.
 ---
 
 # Interview Prep
@@ -16,21 +16,34 @@ description: Create evidence-grounded, personalized interview preparation docume
 3. 优先使用公开网页读取工具提取岗位链接；若页面需要登录、内容不完整或抓取失败，继续处理已获得的信息，同时请求用户粘贴完整职位描述。
 4. 使用适合文件格式的文档或 PDF 能力读取附件；保留原文件，不覆盖用户材料。
 5. 仅在岗位材料或简历缺失到无法建立基本匹配关系时提问。一次只索取最关键的缺失输入。
-6. 默认使用用户的语言输出；用户未指定格式时输出 Markdown。
+6. 分别记录岗位、简历、目标面试和分析报告的语言；不要把任一输入语言自动当作最终面试语言。
+7. 用户未指定格式时输出 Markdown。
 
 不要因为只有岗位链接而要求安装 LangChain。仅在用户明确要求构建独立应用、持久化知识库或复杂检索系统时讨论框架选型。
+
+## 语言路由
+
+1. 识别并记录 `jd_language`、`resume_language`、`interview_language`、`report_language` 和 `answer_mode`；取值使用 `zh`、`en`、`mixed` 或 `bilingual`。
+2. 用户明确指定面试语言、报告语言或双语模式时，始终服从用户。
+3. 用户未指定时，使用用户的对话语言作为 `report_language`，使用岗位描述的主要语言作为 `interview_language`。
+4. 岗位描述中英文都承载关键要求且无法判断主要语言时，保留单语分析报告，并将自我介绍、核心问题、参考回答和高风险问题设为双语。
+5. 无法可靠判断实际面试语言且不同选择会显著改变输出时，标记 `[待确认]`，再询问一个简短问题；不要把岗位文本语言写成公司的确定面试安排。
+6. 使用 `interview_language` 生成自我介绍、面试问题、参考回答和追问；使用 `report_language` 生成岗位分析、匹配矩阵、风险说明和准备计划。
+7. 保留公司名、产品名、项目名、技术名、缩写、数字、日期和单位的原始写法；翻译不得改变个人贡献级别。
 
 ## 必读资源
 
 - 在提取和引用事实前，读取 [references/evidence-policy.md](references/evidence-policy.md)。
+- 在识别输入语言、跨语言匹配或生成中英文内容前，读取 [references/language-policy.md](references/language-policy.md)。
 - 在生成问题、答案和追问前，读取 [references/question-framework.md](references/question-framework.md)。
-- 使用 [assets/interview-prep-template.md](assets/interview-prep-template.md) 作为最终文档骨架；允许按岗位类型删减不适用章节，但不要删除证据、缺口和待确认标记。
+- `report_language` 为中文时使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md)，为英文时使用 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
+- 允许按岗位类型删减不适用章节，但不要删除证据、缺口、语言配置和待确认标记。
 
 ## 工作流
 
 ### 1. 建立输入清单
 
-记录岗位来源、公司、职位、地点、职级、语言、简历版本和材料日期。区分实际读取到的内容与仅由 URL、文件名或用户描述推断的信息。
+记录岗位来源、公司、职位、地点、职级、简历版本、材料日期以及五项语言配置。区分实际读取到的内容与仅由 URL、文件名或用户描述推断的信息。
 
 检查简历中的身份证号、详细住址、私人联系方式等非必要个人信息。提醒用户在需要对外分享文档时进行脱敏；不要在输出中重复这些信息。
 
@@ -42,7 +55,7 @@ description: Create evidence-grounded, personalized interview preparation docume
 - `CV-01`、`CV-02`：简历经历、项目、技能、成果或时间线。
 - `USER-01`：用户在对话中补充并明确确认的信息。
 
-为每条证据记录来源 ID、简短释义和用途。不要大段复制网页或简历原文。
+为每条证据记录来源 ID、原始语言、简短释义和用途。跨语言输出继续使用相同证据 ID。不要大段复制网页或简历原文。
 
 ### 3. 分析岗位
 
@@ -94,7 +107,7 @@ description: Create evidence-grounded, personalized interview preparation docume
 - 回答风险和禁止虚构项。
 - 需要候选人补充的信息。
 
-让参考回答口语化、具体、可复述。不要把模板写成候选人未确认的事实；将缺失数字、角色或结果保留为 `[待确认：……]`。
+让参考回答符合目标面试语言的自然口语习惯、具体且可复述。跨语言回答应重新组织表达，不逐句硬译；中英文版本可以结构不同，但事实、证据 ID、数字和贡献边界必须一致。不要把模板写成候选人未确认的事实；将缺失数字、角色或结果保留为 `[待确认：……]` 或 `[To confirm: ...]`。
 
 ### 8. 生成专项准备
 
@@ -110,7 +123,9 @@ description: Create evidence-grounded, personalized interview preparation docume
 
 ### 9. 输出完整文档
 
-基于模板生成：岗位画像、证据账本、匹配矩阵、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、反向提问、准备计划和一页速查表。
+基于语言配置选择模板并生成：岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、反向提问、准备计划和一页速查表。
+
+双语模式不要机械复制整份报告。岗位分析和准备计划保留一种报告语言；自我介绍、核心问题与回答、高风险回答和反向提问按中英文配对。
 
 在开头给出材料完整性说明；在结尾集中列出所有 `[待确认]` 项，方便用户补充后进行第二轮改写。
 
@@ -123,6 +138,9 @@ description: Create evidence-grounded, personalized interview preparation docume
 - 未找到依据的内容写成 `[待确认]`，不写成确定事实。
 - 回答没有扩大候选人的个人贡献。
 - 数字、技术栈、项目结果和任职时间均能回到来源。
+- 中英文版本使用相同证据 ID，且数字、日期、单位、技术名与贡献级别一致。
+- 问题与答案使用目标面试语言，分析说明使用目标报告语言。
+- 英文回答符合自然口语表达，不是中文句式的逐词翻译。
 - 核心回答能够在两分钟内自然说完，且存在可继续追问的细节。
 - 文档明确展示薄弱点，不用漂亮措辞掩盖证据缺口。
 
