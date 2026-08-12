@@ -104,3 +104,5 @@ python scripts/run_interview_prep.py start \
 ## 扩展约束
 
 在接入模型 SDK、服务或 Langfuse 时，保持 `generation-request.json` 为适配边界，不要把供应商调用逻辑写入 `SKILL.md`。外部适配器必须生成目标 HTML，并保留运行入口的状态、校验和隐私规则。
+
+当实际生成回归耗时增长时，按 [regression-testing-plan.md](regression-testing-plan.md) 分层执行 PR 冒烟、Nightly 全量和发布前深度评估。
