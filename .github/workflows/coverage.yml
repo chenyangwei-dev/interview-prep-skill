@@ -30,6 +30,9 @@ jobs:
       - name: Run tests with coverage
         run: python -m coverage run --branch --source=scripts -m unittest discover -s tests -p "test_*.py" -v
 
+      - name: Run deterministic eval suite
+        run: python evals/run_eval.py --use-samples --require-all --output work/eval-results.json
+
       - name: Print coverage summary
         run: python -m coverage report --show-missing
 

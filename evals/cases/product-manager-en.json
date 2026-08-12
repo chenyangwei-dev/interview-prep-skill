@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "case_id": "product-manager-en",
+  "description": "English product role: verify English labels and honest gap language.",
+  "inputs": {
+    "jd_language": "en",
+    "resume_language": "en",
+    "interview_language": "en",
+    "report_language": "en"
+  },
+  "expected": {
+    "allowed_evidence_ids": ["JD-01", "JD-02", "CV-01", "USER-01"],
+    "required_evidence_ids": ["JD-01", "CV-01", "USER-01"],
+    "required_phrases": ["[JD Fact | JD-01]", "[Resume Fact | CV-01]", "I do not have direct production experience"],
+    "forbidden_phrases": ["I led the company-wide launch", "expert in experimentation"],
+    "numeric_facts": [{"value": "12 weeks", "evidence_id": "USER-01"}],
+    "max_unresolved_confirmations": 0
+  },
+  "private_test_values": ["+86 13800000000"],
+  "sample_output": "[JD Fact | JD-01] The role requires experimentation. [Resume Fact | CV-01] I supported product analytics. [User-confirmed | USER-01] The project lasted 12 weeks. I do not have direct production experience with experimentation platforms."
+}
