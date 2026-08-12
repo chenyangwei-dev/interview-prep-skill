@@ -118,21 +118,35 @@
 
 {{Cover conflict, failure, pressure, collaboration, leadership, career gaps, transitions, and capability gaps.}}
 
-## 11. Questions for the interviewer
+## 11. JD gap crash course: learning resources and verifiable practice
+
+{{For no-evidence and high-risk partial-match items, prioritize and generate: JD evidence, SRC resources, timebox, core concepts, practice deliverable, completion standard, and interview answer boundary.}}
+
+### Shortest learning path
+
+{{4–8 hour path and an integrated closed-book assessment}}
+
+### Learning-source ledger
+
+| ID | Primary source | Publisher | URL | Gap addressed | Accessed |
+|---|---|---|---|---|---|
+| SRC-01 | {{title}} | {{publisher}} | {{URL}} | {{gap}} | {{date}} |
+
+## 12. Questions for the interviewer
 
 {{Tailor questions to the interviewer's role and explain the purpose of each question.}}
 
-## 12. Mock interview script
+## 13. Mock interview script
 
 {{Arrange 10–15 primary questions in a realistic sequence and prepare follow-up branches.}}
 
-## 13. Preparation plan
+## 14. Preparation plan
 
 | Time | Task | Deliverable | Completion standard |
 |---|---|---|---|
 | {{date/time}} | {{task}} | {{deliverable}} | {{standard}} |
 
-## 14. One-page interview cheat sheet
+## 15. One-page interview cheat sheet
 
 - The three things this role values most: {{content}}
 - My three strongest pieces of evidence: {{content}}
@@ -141,11 +155,11 @@
 - Three questions for the interviewer: {{content}}
 - Final checks before the interview: {{content}}
 
-## 15. To-confirm list
+## 16. To-confirm list
 
 1. {{item}}
 
-## 16. Final integrity check
+## 17. Final integrity check
 
 - [ ] Every factual claim has a source label and evidence ID.
 - [ ] Individual contribution and team results are not overstated.

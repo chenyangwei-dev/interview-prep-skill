@@ -36,6 +36,7 @@ description: Create evidence-grounded, personalized interview preparation report
 - 在提取和引用事实前，读取 [references/evidence-policy.md](references/evidence-policy.md)。
 - 在识别输入语言、跨语言匹配或生成中英文内容前，读取 [references/language-policy.md](references/language-policy.md)。
 - 在生成问题、答案和追问前，读取 [references/question-framework.md](references/question-framework.md)。
+- 在为无证据或部分匹配项检索突击资料前，读取 [references/learning-resources-policy.md](references/learning-resources-policy.md)。
 - 在生成默认 HTML 交付物前，读取 [references/html-output-spec.md](references/html-output-spec.md)。
 - `report_language` 为中文时复制并填充 [assets/interview-prep-template.zh.html](assets/interview-prep-template.zh.html)，为英文时复制并填充 [assets/interview-prep-template.en.html](assets/interview-prep-template.en.html)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
 - 用户明确要求 Markdown 时，分别使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md) 或 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。
@@ -123,11 +124,20 @@ description: Create evidence-grounded, personalized interview preparation report
 
 将通用专业知识与候选人确有经历分开，避免把知识型参考答案写成亲历事实。
 
+对 `无证据` 和高风险 `部分匹配` 项生成“缺口突击”章节：
+
+- 使用网络检索最新资料，技术主题优先官方文档、标准、论文或项目一手仓库。
+- 按岗位重要性排序，不平均分配篇幅；硬性要求优先于加分项。
+- 每项给出：缺口证据、学习目标、2–4 个精选链接、建议时长、必须会讲的概念、可验证练习产出和面试表达边界。
+- 提供一条时间受限的最短学习路径，以及“不看资料也能完成”的最终验收任务。
+- 为外部资料分配 `SRC-01` 等稳定 ID，记录标题、发布方、URL、用途和访问日期；普通链接使用 `rel="noreferrer"`，不得作为脚本、样式或图片依赖加载。
+- 明确区分“学习所得知识”“练习项目”和“生产经历”；不得因完成突击学习而提升匹配评级。
+
 ### 9. 输出可视化报告
 
 基于语言配置选择模板，生成一个无需构建步骤、无需网络即可打开的 `.html` 文件。将 CSS 与 JavaScript 内联，不加载 CDN、外部字体、远程图片或分析脚本。默认文件名使用 `<company>-<role>-interview-prep.html`；公司或岗位未知时使用 `interview-prep-report.html`。
 
-报告必须包含：顶部摘要卡片、岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、反向提问、准备计划、一页速查表和待确认清单。提供章节导航、问题搜索、问答展开/收起和打印按钮；交互失效时，正文仍须完整可读。
+报告必须包含：顶部摘要卡片、岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、缺口突击学习资料、反向提问、准备计划、一页速查表和待确认清单。提供章节导航、问题搜索、问答展开/收起和打印按钮；交互失效时，正文仍须完整可读。
 
 摘要只展示由报告内容直接计数得到的数量，例如强匹配项、部分匹配项、证据缺口和高优先级问题。不要生成没有明确评分口径的匹配百分比、雷达图或综合分数。
 
@@ -151,6 +161,7 @@ description: Create evidence-grounded, personalized interview preparation report
 - 英文回答符合自然口语表达，不是中文句式的逐词翻译。
 - 核心回答能够在两分钟内自然说完，且存在可继续追问的细节。
 - 文档明确展示薄弱点，不用漂亮措辞掩盖证据缺口。
+- 突击资料逐项对应缺口，使用一手来源，包含时间盒、练习产出和诚实表达边界；学习完成不改写为工作经历。
 - HTML 为单文件，自包含且无需网络；没有外部脚本、样式表、字体或图片依赖。
 - 页面在桌面和移动宽度下可读，键盘可操作，打印时隐藏导航和交互控件。
 - 摘要数字与正文逐项计数一致，不使用无依据的百分比或评分。
