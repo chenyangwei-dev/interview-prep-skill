@@ -83,7 +83,7 @@ DOCX 提取使用 Python 标准库，不需要 `python-docx`。
 开发和覆盖率报告需要：
 
 ```bash
-python -m pip install coverage
+python -m pip install "coverage>=7.10"
 ```
 
 LangGraph 是可选执行后端；只有显式选择 `--engine langgraph` 时才需要安装：
@@ -225,11 +225,12 @@ python evals/run_eval.py --use-samples --require-all
 
 ```bash
 python -m coverage erase
-python -m coverage run --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/unit -p "test_*.py"
-python -m coverage run --append --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/regression -p "test_*.py"
-python -m coverage report -m
+python -m coverage combine
+python -m coverage report --fail-under=80 -m
 ```
 
 单元测试覆盖独立的渲染器、提取器、验证器和评估器。回归测试覆盖完整的命令行提取、带检查点工作流、DAG 校验、provenance Guard 和最终发布边界。`evals/run_eval.py` 保持独立，因为它评估生成报告的质量，而不是 Python 实现单元。
@@ -238,6 +239,7 @@ python -m coverage report -m
 
 ```text
 interview-prep-skill/
+├── .coveragerc                      # 分支与子进程覆盖率配置
 ├── README.md                        # 英文项目文档
 ├── README.cn.md                     # 简体中文项目文档
 ├── requirements-langgraph.txt       # 可选 LangGraph 与 SQLite checkpoint 依赖
@@ -284,11 +286,12 @@ python -m unittest discover -s tests/unit -p "test_*.py" -v
 python -m unittest discover -s tests/regression -p "test_*.py" -v
 python evals/run_eval.py --use-samples --require-all
 python -m coverage erase
-python -m coverage run --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/unit -p "test_*.py"
-python -m coverage run --append --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/regression -p "test_*.py"
-python -m coverage report -m
+python -m coverage combine
+python -m coverage report --fail-under=80 -m
 ```
 
 请勿提交真实简历、提取后的个人数据、包含私人信息的生成报告、访问令牌或网站会话凭据。

@@ -438,6 +438,7 @@ def run_semantic_checker(
     request_path = run_dir / "staging" / "semantic-guard-request.json"
     output_path = run_dir / "staging" / "semantic-guard-result.json"
     _write_json(request_path, {"schema_version": 1, "claims": requests})
+    output_path.unlink(missing_ok=True)
     replacements = {
         "request": str(request_path),
         "output": str(output_path),

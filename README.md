@@ -83,7 +83,7 @@ DOCX extraction uses Python's standard library and does not require `python-docx
 For development and coverage reporting:
 
 ```bash
-python -m pip install coverage
+python -m pip install "coverage>=7.10"
 ```
 
 LangGraph is an optional execution backend and is only required with `--engine langgraph`:
@@ -218,11 +218,12 @@ Run line and branch coverage:
 
 ```bash
 python -m coverage erase
-python -m coverage run --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/unit -p "test_*.py"
-python -m coverage run --append --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/regression -p "test_*.py"
-python -m coverage report -m
+python -m coverage combine
+python -m coverage report --fail-under=80 -m
 ```
 
 Unit tests cover individual renderers, extractors, validators, and evaluators. Regression tests exercise complete command-line extraction, checkpointed workflow paths, DAG validation, provenance guards, and final-publication boundaries. `evals/run_eval.py` remains separate because it evaluates generated report quality rather than Python implementation units.
@@ -231,6 +232,7 @@ Unit tests cover individual renderers, extractors, validators, and evaluators. R
 
 ```text
 interview-prep-skill/
+├── .coveragerc                      # Branch and subprocess coverage configuration
 ├── README.md                        # English project documentation
 ├── README.cn.md                     # Simplified Chinese project documentation
 ├── requirements-langgraph.txt       # Optional LangGraph and SQLite checkpoint dependencies
@@ -277,11 +279,12 @@ python -m unittest discover -s tests/unit -p "test_*.py" -v
 python -m unittest discover -s tests/regression -p "test_*.py" -v
 python evals/run_eval.py --use-samples --require-all
 python -m coverage erase
-python -m coverage run --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/unit -p "test_*.py"
-python -m coverage run --append --branch --source=scripts \
+python -m coverage run \
   -m unittest discover -s tests/regression -p "test_*.py"
-python -m coverage report -m
+python -m coverage combine
+python -m coverage report --fail-under=80 -m
 ```
 
 Do not commit real resumes, extracted personal data, generated reports containing private information, access tokens, or website session credentials.
