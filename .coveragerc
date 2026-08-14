@@ -1,0 +1,9 @@
+[run]
+branch = True
+source = scripts
+parallel = True
+patch = subprocess
+
+[report]
+precision = 2
+show_missing = True
