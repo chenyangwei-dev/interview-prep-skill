@@ -37,30 +37,9 @@
 
 ## 工作流程
 
-```mermaid
-flowchart LR
-    JD[岗位链接或描述] --> INV[输入清单]
-    PDF[PDF 简历] --> EP[PDF 提取器]
-    DOCX[DOCX 简历] --> ED[DOCX 提取器]
-    TEXT[Markdown 或文本简历] --> INV
-    EP --> MD[带来源位置的 Markdown]
-    ED --> MD
-    MD --> VQ[可视化文档检查]
-    VQ --> INV
-    INV --> E[证据台账]
-    E --> M[岗位与简历匹配矩阵]
-    M --> Q[问题、回答与项目深挖]
-    M --> SD[系统设计专项]
-    M --> MG[管理层面试专项]
-    M --> G[针对缺口的学习计划]
-    Q --> H[暂存 HTML 与 provenance]
-    SD --> H
-    MG --> H
-    G --> H
-    H --> GR[Schema、原文 span、规则与语义 Guard]
-    GR --> QA[HTML 校验与可选评测]
-    QA --> F[原子化最终发布]
-```
+[![面试准备证据工作流](docs/diagrams/interview-prep-workflow.zh.drawio.svg)](docs/diagrams/interview-prep-workflow.zh.drawio)
+
+该图使用 Draw.io 生成；点击图片可打开对应的可编辑 `.drawio` 源文件。
 
 提取器生成的是内容索引，不是排版真值。PDF 页面和复杂 DOCX 仍需要可视化检查，以发现分栏、文本框、表格、图片、字形缺失和 OCR 问题。
 
@@ -175,18 +154,9 @@ python scripts/run_interview_prep.py status --run-dir work/runs/example
 
 两个执行后端共享相同节点函数和 Guard：
 
-```mermaid
-flowchart LR
-    CLI[统一 CLI] --> N[native 执行器]
-    CLI --> L[LangGraph StateGraph]
-    N --> P[节点函数]
-    L --> P
-    P --> S[staging 产物]
-    S --> G{provenance 与原文 Guard}
-    G -->|通过| A[artifact promotion]
-    G -->|失败| X[停止下游节点]
-    A --> F[最终发布门禁]
-```
+[![Native 与 LangGraph 双后端 Guarded DAG](docs/diagrams/guarded-dag-runtime.zh.drawio.svg)](docs/diagrams/guarded-dag-runtime.zh.drawio)
+
+每个运行时节点后都有对应的阻断型 Guard；点击图片可打开可编辑的 Draw.io 源文件。
 
 选择 LangGraph：
 
@@ -277,6 +247,7 @@ interview-prep-skill/
 ├── SKILL.md                         # 核心工作流与行为约定
 ├── agents/openai.yaml              # Skill 展示元数据
 ├── assets/                         # 中英文 HTML/Markdown 模板
+├── docs/diagrams/                  # 可编辑 Draw.io 源文件和 README SVG 导出图
 ├── references/                     # 证据、语言、问题、学习和 HTML 策略
 ├── scripts/
 │   ├── extract_pdf.py              # PDF → 带来源位置的 Markdown

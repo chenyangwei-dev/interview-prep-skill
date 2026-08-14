@@ -37,30 +37,9 @@ Generate a self-contained visual HTML report with role-resume fit analysis, resu
 
 ## How it works
 
-```mermaid
-flowchart LR
-    JD[Job URL or description] --> INV[Input inventory]
-    PDF[PDF resume] --> EP[PDF extractor]
-    DOCX[DOCX resume] --> ED[DOCX extractor]
-    TEXT[Markdown or text resume] --> INV
-    EP --> MD[Source-located Markdown]
-    ED --> MD
-    MD --> VQ[Visual document review]
-    VQ --> INV
-    INV --> E[Evidence ledger]
-    E --> M[Role-resume match matrix]
-    M --> Q[Questions, answers, and deep dives]
-    M --> SD[System-design practice]
-    M --> MG[Management-round preparation]
-    M --> G[Gap-focused learning plan]
-    Q --> H[Staged visual HTML plus provenance]
-    SD --> H
-    MG --> H
-    G --> H
-    H --> GR[Schema, span, rule, and semantic guards]
-    GR --> QA[HTML validation and optional evaluation]
-    QA --> F[Atomic final publication]
-```
+[![Interview-prep evidence-grounded workflow](docs/diagrams/interview-prep-workflow.en.drawio.svg)](docs/diagrams/interview-prep-workflow.en.drawio)
+
+The diagram is generated with Draw.io and remains editable through the linked `.drawio` source.
 
 The extractors create a content index, not a layout truth. PDF pages and complex DOCX files still require visual review for columns, text boxes, tables, images, missing glyphs, and OCR issues.
 
@@ -168,18 +147,9 @@ The executable runtime currently uses five coarse nodes: `prepare → generate_r
 
 Both execution backends call the same node functions and Guards:
 
-```mermaid
-flowchart LR
-    CLI[Shared CLI] --> N[Native executor]
-    CLI --> L[LangGraph StateGraph]
-    N --> P[Node functions]
-    L --> P
-    P --> S[Staged artifacts]
-    S --> G{Provenance and source Guards}
-    G -->|Pass| A[Artifact promotion]
-    G -->|Fail| X[Stop downstream nodes]
-    A --> F[Final publication gate]
-```
+[![Native and LangGraph guarded DAG runtime](docs/diagrams/guarded-dag-runtime.en.drawio.svg)](docs/diagrams/guarded-dag-runtime.en.drawio)
+
+Each runtime node is followed by its blocking Guard. The editable Draw.io source is linked from the image.
 
 Select LangGraph explicitly:
 
@@ -270,6 +240,7 @@ interview-prep-skill/
 ├── SKILL.md                         # Core workflow and behavioral contract
 ├── agents/openai.yaml              # Skill display metadata
 ├── assets/                         # Chinese and English HTML/Markdown templates
+├── docs/diagrams/                  # Editable Draw.io sources and README SVG exports
 ├── references/                     # Evidence, language, questions, learning, HTML policies
 ├── scripts/
 │   ├── extract_pdf.py              # PDF → source-located Markdown
