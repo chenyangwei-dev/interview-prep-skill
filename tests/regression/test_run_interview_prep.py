@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import json
-import re
 import shlex
 import subprocess
 import sys
@@ -12,24 +11,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "scripts" / "run_interview_prep.py"
-
-
-def duplicate_template_card(template: str, kind: str, count: int) -> str:
-    pattern = rf'(<details[^>]+data-kind="{re.escape(kind)}"[^>]*>.*?</details>)'
-    match = re.search(pattern, template, flags=re.DOTALL)
-    if not match:
-        raise AssertionError(f"Missing template card for data-kind={kind}")
-    return template[: match.start()] + (match.group(1) * count) + template[match.end() :]
-
-
-def make_valid_report(path: Path) -> None:
-    template = (ROOT / "assets" / "interview-prep-template.zh.html").read_text(encoding="utf-8")
-    template = duplicate_template_card(template, "system-design", 2)
-    template = duplicate_template_card(template, "management-interview", 6)
-    report = re.sub(r"\{\{[^{}]+\}\}", "合成测试内容", template)
-    report = re.sub(r"<!--.*?最终输出删除本注释。.*?-->", "", report, flags=re.DOTALL)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(report, encoding="utf-8")
+FIXTURE_GENERATOR = ROOT / "tests" / "regression" / "fixtures" / "generate_guarded_report.py"
 
 
 class RunInterviewPrepTests(unittest.TestCase):
@@ -40,17 +22,6 @@ class RunInterviewPrepTests(unittest.TestCase):
             inputs.mkdir()
             (inputs / "jd.md").write_text("Synthetic JD", encoding="utf-8")
             (inputs / "resume.md").write_text("Synthetic resume", encoding="utf-8")
-            source_report = temp / "source report.html"
-            make_valid_report(source_report)
-            generator = temp / "copy generator.py"
-            generator.write_text(
-                "from pathlib import Path\n"
-                "import shutil, sys\n"
-                "assert Path(sys.argv[1]).is_file()\n"
-                "Path(sys.argv[2]).parent.mkdir(parents=True, exist_ok=True)\n"
-                "shutil.copyfile(sys.argv[3], sys.argv[2])\n",
-                encoding="utf-8",
-            )
             job = {
                 "schema_version": 1,
                 "jd": {"path": "input files/jd.md"},
@@ -69,10 +40,13 @@ class RunInterviewPrepTests(unittest.TestCase):
             command_template = " ".join(
                 [
                     shlex.quote(sys.executable),
-                    shlex.quote(str(generator)),
+                    shlex.quote(str(FIXTURE_GENERATOR)),
+                    "--request",
                     "{request}",
+                    "--output",
                     "{output}",
-                    shlex.quote(str(source_report)),
+                    "--provenance",
+                    "{provenance}",
                 ]
             )
 
@@ -96,7 +70,7 @@ class RunInterviewPrepTests(unittest.TestCase):
             self.assertEqual(completed.returncode, 0, completed.stderr)
             state = json.loads((temp / "run with spaces" / "state.json").read_text(encoding="utf-8"))
             self.assertEqual(state["status"], "completed")
-            self.assertEqual(state["completed_steps"], ["prepare", "generate", "validate"])
+            self.assertEqual(state["completed_steps"], ["prepare", "generate", "validate", "evaluate"])
 
     def test_prepare_wait_resume_and_logs_do_not_contain_input_text(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -111,7 +85,7 @@ class RunInterviewPrepTests(unittest.TestCase):
                 "schema_version": 1,
                 "case_id": "runner-synthetic",
                 "expected": {
-                    "allowed_evidence_ids": [],
+                    "allowed_evidence_ids": ["JD-01", "CV-01"],
                     "required_phrases": ["合成测试内容"],
                     "max_unresolved_confirmations": 999,
                 },
@@ -153,7 +127,23 @@ class RunInterviewPrepTests(unittest.TestCase):
             self.assertNotIn(private_resume, events)
 
             report = temp / "generated.html"
-            make_valid_report(report)
+            provenance = temp / "generated.html.provenance.json"
+            generated = subprocess.run(
+                [
+                    sys.executable,
+                    str(FIXTURE_GENERATOR),
+                    "--request",
+                    str(run_dir / "generation-request.json"),
+                    "--output",
+                    str(report),
+                    "--provenance",
+                    str(provenance),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(generated.returncode, 0, generated.stderr)
             resumed = subprocess.run(
                 [
                     sys.executable,
@@ -163,6 +153,8 @@ class RunInterviewPrepTests(unittest.TestCase):
                     str(run_dir),
                     "--report",
                     str(report),
+                    "--provenance",
+                    str(provenance),
                 ],
                 capture_output=True,
                 text=True,

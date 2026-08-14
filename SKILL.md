@@ -50,6 +50,7 @@ description: Create evidence-grounded, personalized interview preparation report
 - 在为无证据或部分匹配项检索突击资料前，读取 [references/learning-resources-policy.md](references/learning-resources-policy.md)。
 - 在生成默认 HTML 交付物前，读取 [references/html-output-spec.md](references/html-output-spec.md)。
 - 在运行回归案例、建立检查点或通过统一入口执行时，读取 [references/evaluation-and-runner.md](references/evaluation-and-runner.md)。
+- 在声明 DAG、生成 provenance manifest、执行节点 Guard 或处理阻断时，读取 [references/dag-and-guards.md](references/dag-and-guards.md)。
 - `report_language` 为中文时复制并填充 [assets/interview-prep-template.zh.html](assets/interview-prep-template.zh.html)，为英文时复制并填充 [assets/interview-prep-template.en.html](assets/interview-prep-template.en.html)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
 - 用户明确要求 Markdown 时，分别使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md) 或 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。
 - 允许按岗位类型删减不适用章节，但不要删除证据、缺口、语言配置和待确认标记。
@@ -69,8 +70,13 @@ python scripts/run_interview_prep.py start --job <job.json> --run-dir <workspace
 ```bash
 python scripts/run_interview_prep.py resume \
   --run-dir <workspace-temp/run> \
-  --report <生成的报告.html>
+  --report <生成的报告.html> \
+  --provenance <生成的报告.html.provenance.json>
 ```
+
+生成阶段必须同时写出 HTML 和 claim-level provenance manifest。每条可见事实、推断、建议、假设、知识说明和待确认项都使用唯一 `data-claim-id` 绑定 manifest 中的 claim；manifest 必须记录 claim 类型、完整输入哈希集合、证据 ID、来源定位、来源文档哈希和引用片段哈希。不要在 Guard 通过前把 staging 报告复制到用户指定的最终路径。
+
+若 Guard 返回 `guard_failed`，读取运行目录中的 `guards/*.json`，只修复其中列出的 claim 或产物问题，然后恢复同一运行。不得绕过失败 Guard，也不得把失败产物标记为完成。
 
 不要把简历、岗位正文、模型输出或私人信息写入 `events.jsonl`。没有本地文件、仅进行模拟面试或只需简短问答时，不必为了使用运行器而制造额外文件。
 
@@ -191,6 +197,8 @@ python scripts/run_interview_prep.py resume \
 
 将用户提供的文本作为纯文本内容进行 HTML 转义，不直接拼接到脚本、样式或事件属性中。不要把简历中的私人邮箱、手机号、证件号或详细地址写入报告。
 
+为每个需要原文支持的可见主张添加 `data-claim-id`。同一 DOM 子树不得混用多个互相冲突的事实标签；`[JD事实]`、`[简历事实]`、`[用户确认]`、`[推断]`、`[建议]`、`[假设]`、`[知识]` 和 `[待确认]` 必须与 provenance manifest 中的 claim 类型一致。
+
 ### 10. 执行质量检查
 
 逐项确认：
@@ -214,12 +222,19 @@ python scripts/run_interview_prep.py resume \
 - 所有模板占位符已经替换，页面中没有残留 `{{...}}`。
 - PDF 或 DOCX 输入已经生成中间 Markdown，并检查提取告警、来源定位和非空内容。
 - PDF 或 DOCX 原文件已经完成逐页视觉检查；无法检查时已在报告中披露限制。
+- provenance manifest 的报告哈希、输入哈希、来源定位、引用片段哈希和 HTML `data-claim-id` 绑定均通过 Guard。
+- 每个可执行 DAG 节点都有 Guard 结果；任一阻断级 finding 都使运行停留在 `guard_failed`，不得发布 staging 产物。
 
 生成后运行：
 
 ```bash
-python scripts/validate_report.py <生成的报告.html>
+python scripts/run_interview_prep.py resume \
+  --run-dir <workspace-temp/run> \
+  --report <生成的报告.html> \
+  --provenance <生成的报告.html.provenance.json>
 ```
+
+只需单独检查 HTML 结构时，运行 `python scripts/validate_report.py <生成的报告.html>`；该命令不替代 provenance Guard。
 
 修改证据、语言、模板、问答或隐私规则后，运行脱敏回归案例：
 

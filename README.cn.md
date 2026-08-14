@@ -26,6 +26,10 @@
 - **证据台账**：为事实性主张关联稳定的 `JD-*`、`CV-*`、`USER-*` 和 `SRC-*` ID。
 - **中英文支持**：分别设置岗位描述、简历、面试、报告和回答的语言。
 - **项目深挖**：围绕简历中的真实项目准备技术问题、行为问题、压力问题和追问。
+- **系统设计专项**：根据 JD 信号生成 2–3 道可能的系统设计题，并提供需求、架构/数据流图、故障处理、取舍和显式假设。
+- **管理层面试专项**：准备高价值主管问题、基于证据的回答方案、压力追问，以及缺少管理经历证据时的诚实边界。
+- **Claim 级原文 Guard**：将可见主张绑定到带哈希的原文片段，并阻断无依据事实、贡献升级、数字冲突和模糊推断。
+- **DAG 运行器与分阶段发布**：记录 Guard 状态，只有校验和可选评测通过后才发布 HTML 及其 provenance sidecar。
 - **针对缺口的学习计划**：针对简历中缺失的重要岗位要求，检索官方优先的学习资料。
 - **确定性文档提取**：在分析前，将 PDF 和 DOCX 简历转换为带来源位置的中间 Markdown。
 - **默认生成可视化 HTML**：输出一个响应式、可打印、可离线打开的单文件，不依赖 CDN、远程字体、分析脚本或构建步骤。
@@ -46,10 +50,16 @@ flowchart LR
     INV --> E[证据台账]
     E --> M[岗位与简历匹配矩阵]
     M --> Q[问题、回答与项目深挖]
+    M --> SD[系统设计专项]
+    M --> MG[管理层面试专项]
     M --> G[针对缺口的学习计划]
-    Q --> H[自包含可视化 HTML]
+    Q --> H[暂存 HTML 与 provenance]
+    SD --> H
+    MG --> H
     G --> H
-    H --> QA[确定性验证与可视化 QA]
+    H --> GR[Schema、原文 span、规则与语义 Guard]
+    GR --> QA[HTML 校验与可选评测]
+    QA --> F[原子化最终发布]
 ```
 
 提取器生成的是内容索引，不是排版真值。PDF 页面和复杂 DOCX 仍需要可视化检查，以发现分栏、文本框、表格、图片、字形缺失和 OCR 问题。
@@ -64,6 +74,8 @@ flowchart LR
 - 定制自我介绍和可复用故事库；
 - 按优先级排序的面试问题，以及 60–120 秒参考回答；
 - 追问、项目深挖、技术问题和压力问题；
+- 2–3 道基于 JD 推导的系统设计练习，包含架构/数据流图、可靠性分析和取舍；信号不足时明确标记不适用；
+- 6–8 道管理层问题，包含回答方案、故事证据、压力追问和禁止虚构项；
 - 带时间盒和可验证练习的缺口学习资料；
 - 反向提问、准备计划、一页速查表和待确认清单；
 - 章节导航、问题搜索、展开/收起控件和打印样式。
@@ -125,6 +137,37 @@ python -m pip install coverage
 | 默认输出 | 一个自包含 `.html` 文件 |
 
 该 Skill 工作流不需要安装 LangChain。只有在构建独立应用、持久化知识库或大型检索系统时，才可能需要额外的编排框架。
+
+## 带 Guard 的 DAG 运行器
+
+当 JD 与简历能够保存为本地文件时，创建运行目录和标准化生成请求：
+
+```bash
+python scripts/run_interview_prep.py start \
+  --job work/job.json \
+  --run-dir work/runs/example
+```
+
+未配置生成器时，runner 以退出码 `3` 返回 `WAITING_FOR_GENERATION`。按照请求同时生成 HTML 与 claim-level provenance manifest，然后恢复同一运行：
+
+```bash
+python scripts/run_interview_prep.py resume \
+  --run-dir work/runs/example \
+  --report outputs/company-role-interview-prep.html \
+  --provenance outputs/company-role-interview-prep.html.provenance.json
+```
+
+查看完整内容图、当前可执行图或隐私安全状态：
+
+```bash
+python scripts/run_interview_prep.py plan
+python scripts/run_interview_prep.py plan --runtime
+python scripts/run_interview_prep.py status --run-dir work/runs/example
+```
+
+当前实际 runtime 使用五个粗粒度节点：`prepare → generate_report → validate_report → evaluate_report（可选）→ finalize`。证据、匹配、故事、系统设计和管理层问答等细粒度节点已经声明，但目前仍在整体 generator 内执行，尚未实现章节级执行与缓存。
+
+manifest 必须包含完整的标准化输入哈希集合，并通过 `data-claim-id` 绑定每个可见主张。原文完全包含的来源事实可以通过确定性 span 检查；释义和推断需要配置 semantic checker。失败的 staging 产物不会覆盖用户指定的最终报告。
 
 ## 中间文档提取
 
@@ -189,7 +232,7 @@ python -m coverage run --append --branch --source=scripts \
 python -m coverage report -m
 ```
 
-单元测试覆盖独立的渲染器、提取器、验证器和评估器。回归测试覆盖完整的命令行提取和带检查点工作流。`evals/run_eval.py` 保持独立，因为它评估生成报告的质量，而不是 Python 实现单元。
+单元测试覆盖独立的渲染器、提取器、验证器和评估器。回归测试覆盖完整的命令行提取、带检查点工作流、DAG 校验、provenance Guard 和最终发布边界。`evals/run_eval.py` 保持独立，因为它评估生成报告的质量，而不是 Python 实现单元。
 
 ## 项目结构
 
@@ -206,7 +249,11 @@ interview-prep-skill/
 │   ├── extract_pdf.py              # PDF → 带来源位置的 Markdown
 │   ├── extract_docx.py             # DOCX OOXML → 带来源位置的 Markdown
 │   ├── extraction_common.py        # 共享 Markdown 模式与写入器
-│   └── validate_report.py          # 确定性 HTML 验证器
+│   ├── dag.py                       # 依赖图声明与校验
+│   ├── provenance.py                # 原文 span 与 claim 溯源原语
+│   ├── guards.py                    # 阻断型 artifact 与 grounding Guard
+│   ├── run_interview_prep.py        # 分阶段 DAG runner 与最终发布门禁
+│   └── validate_report.py           # 确定性 HTML 验证器
 ├── evals/                          # 脱敏的 Skill 输出回归案例及运行器
 └── tests/
     ├── unit/                       # 快速、隔离的 Python 单元测试
@@ -220,6 +267,8 @@ interview-prep-skill/
 - 缺失的数字、角色、日期和结果会保持为待确认状态。
 - 完成学习练习不会将简历要求从“无证据”改成“已匹配”。
 - 外部来源只支持学习材料，不支持关于候选人工作经历的主张。
+- 真实 Evidence ID 本身并不充分；被引用的原文片段必须实际支持渲染主张。
+- 推断、建议、假设、知识参考和未知项必须显式标记，不能升级为来源事实。
 
 ## 贡献
 
