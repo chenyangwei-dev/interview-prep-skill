@@ -16,6 +16,8 @@
     "contribution": "Do not strengthen participation into ownership or leadership.",
     "language": "Bilingual answers preserve evidence IDs, numbers, dates, units, and contribution level.",
     "privacy": "Reports and evaluation artifacts exclude unnecessary personal information.",
-    "honesty": "Unknown details remain explicit confirmation items rather than invented facts."
+    "honesty": "Unknown details remain explicit confirmation items rather than invented facts.",
+    "system_design": "System-design practice is derived from JD evidence, labels assumptions, provides complete solutions and trade-offs, and never claims to reveal company-internal questions or architecture.",
+    "management_interview": "Management-round preparation ties concerns and answer strategies to role evidence without inventing candidate experience or people-management scope."
   }
 }

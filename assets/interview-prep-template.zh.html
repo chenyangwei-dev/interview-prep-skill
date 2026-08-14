@@ -191,6 +191,8 @@
         <a href="#stories">故事库</a>
         <a href="#questions">核心问答</a>
         <a href="#deep-dive">专项深挖</a>
+        <a href="#system-design">系统设计</a>
+        <a href="#management-interview">管理层面试</a>
         <a href="#crash-course">缺口突击</a>
         <a href="#reverse">反向提问</a>
         <a href="#plan">准备计划</a>
@@ -203,7 +205,7 @@
 
     <main>
       <div class="toolbar" aria-label="报告操作">
-        <input id="question-search" class="search" type="search" placeholder="搜索问题、回答或证据 ID" aria-label="搜索核心问答">
+        <input id="question-search" class="search" type="search" placeholder="搜索问题、解法、回答或证据 ID" aria-label="搜索全部面试问答">
         <button class="control" id="expand-all" type="button">展开全部问答</button>
         <button class="control" id="collapse-all" type="button">收起全部问答</button>
         <button class="control" id="print-report" type="button">打印 / 导出 PDF</button>
@@ -311,8 +313,52 @@
         </div>
       </section>
 
+      <section id="system-design">
+        <span class="section-kicker">08 / System design</span>
+        <h2>系统设计：2–3 道 JD 高概率题与解法</h2>
+        <p class="lead"><span class="chip inference">[推断｜依据：JD 证据]</span> 题目由岗位职责与质量属性推导，不代表公司的真实题库或现有架构。练习数字必须来自 JD 或标记为 [假设]。</p>
+        <details class="qa-card" data-search data-kind="system-design" open>
+          <summary>系统设计 1｜{{题目}}</summary>
+          <div class="qa-body">
+            <p><strong>可能被问的依据：</strong><span class="chip inference">[推断｜依据：{{JD-ID}}]</span> {{依据说明}}</p>
+            <p><strong>澄清问题：</strong>{{3–6个澄清问题}}</p>
+            <p><strong>需求、非功能约束与不做事项：</strong>{{内容}}</p>
+            <p><strong>假设与容量估算：</strong>{{JD数字或带[假设]标签的练习数字、公式与设计影响}}</p>
+            <p><strong>API / 事件契约与数据模型：</strong>{{内容}}</p>
+            <div class="answer"><strong>架构图与端到端数据流</strong>{{纯文本流程、表格或内联SVG}}</div>
+            <p><strong>关键组件深挖：</strong>{{内容}}</p>
+            <p><strong>规模、可靠性、降级、可观测性、安全、隐私与成本：</strong>{{内容}}</p>
+            <p><strong>故障场景与恢复：</strong>{{2–4个场景}}</p>
+            <p><strong>备选方案与取舍：</strong>{{内容}}</p>
+            <p><strong>8–12 分钟讲解顺序：</strong>{{内容}}</p>
+            <p><strong>连续追问：</strong>{{2–4个追问}}</p>
+            <p><strong>经验边界：</strong><span class="chip recommendation">[建议｜依据：{{CV-ID或证据缺口}}]</span> {{知识型参考/个人经验/待确认}}</p>
+          </div>
+        </details>
+        <!-- 复制为 2–3 道题；不适用时删除示例块并写明带依据的不适用说明；最终输出删除本注释。 -->
+      </section>
+
+      <section id="management-interview">
+        <span class="section-kicker">09 / Management interview</span>
+        <h2>管理层面试：关注问题与回答方案</h2>
+        <p class="lead"><span class="chip inference">[推断｜依据：岗位级别、业务目标与协作范围]</span> 管理层关注点由材料推导；人员管理题只在 JD 或简历支持管理职责时加入。</p>
+        <details class="qa-card" data-search data-kind="management-interview" open>
+          <summary>管理层问题 1｜{{问题}}</summary>
+          <div class="qa-body">
+            <p><span class="chip recommendation">{{高/中/低}}优先级</span></p>
+            <p><strong>管理层关注点：</strong><span class="chip inference">[推断｜依据：{{JD-ID或岗位分析}}]</span> {{关注点}}</p>
+            <p><strong>回答方案：</strong>{{结论—证据故事—关键判断—结果—复盘—岗位连接}}</p>
+            <p><strong>推荐故事与证据：</strong>{{CV-ID/USER-ID/[待确认]}}</p>
+            <div class="answer"><strong>参考回答或可填充骨架</strong>{{60–120秒内容}}</div>
+            <p><strong>压力追问：</strong>{{2–4个追问}}</p>
+            <p><strong>回答风险与禁止虚构项：</strong><span class="chip recommendation">[建议｜依据：证据边界]</span> {{内容}}</p>
+          </div>
+        </details>
+        <!-- 按岗位价值复制为 6–8 道题；最终输出删除本注释。 -->
+      </section>
+
       <section id="crash-course">
-        <span class="section-kicker">08 / Gap crash course</span>
+        <span class="section-kicker">10 / Gap crash course</span>
         <h2>JD 缺口突击：学习资料与可交付练习</h2>
         <p class="lead"><span class="chip recommendation">[建议｜依据：匹配矩阵]</span> 学习用于形成知识型回答，不构成生产经验，也不改变匹配评级。</p>
         <div class="grid-2">{{按优先级排列的缺口学习单元：JD证据、SRC资料、时间盒、核心概念、练习产出、完成标准、表达边界}}</div>
@@ -322,7 +368,7 @@
       </section>
 
       <section id="reverse">
-        <span class="section-kicker">09 / Interview strategy</span>
+        <span class="section-kicker">11 / Interview strategy</span>
         <h2>反向提问与模拟面试</h2>
         <div class="grid-2">
           <article class="card"><h3>向面试官提问</h3>{{反向提问}}</article>
@@ -331,7 +377,7 @@
       </section>
 
       <section id="plan">
-        <span class="section-kicker">10 / Preparation plan</span>
+        <span class="section-kicker">12 / Preparation plan</span>
         <h2>准备计划</h2>
         <div class="table-wrap">
           <table>
@@ -342,18 +388,19 @@
       </section>
 
       <section id="cheat-sheet">
-        <span class="section-kicker">11 / Last-minute brief</span>
+        <span class="section-kicker">13 / Last-minute brief</span>
         <h2>一页临场速查表</h2>
         <div class="grid-2">
           <article class="card"><h3>岗位最看重的三件事</h3>{{三件事}}</article>
           <article class="card"><h3>我最有力的三项证据</h3>{{三项证据}}</article>
           <article class="card"><h3>三个必讲故事</h3>{{三个故事}}</article>
+          <article class="card"><h3>系统设计与管理层主线</h3>{{系统设计与管理层主线}}</article>
           <article class="card"><h3>风险与反向提问</h3>{{风险与反向提问}}</article>
         </div>
       </section>
 
       <section id="evidence">
-        <span class="section-kicker">12 / Evidence ledger</span>
+        <span class="section-kicker">14 / Evidence ledger</span>
         <h2>证据账本与双语术语表</h2>
         <h3>证据账本</h3>
         <div class="table-wrap">
@@ -372,13 +419,13 @@
       </section>
 
       <section id="confirmations">
-        <span class="section-kicker">13 / To confirm</span>
+        <span class="section-kicker">15 / To confirm</span>
         <h2>待确认清单</h2>
         <ol>{{待确认清单}}</ol>
       </section>
 
       <section id="integrity">
-        <span class="section-kicker">14 / Integrity check</span>
+        <span class="section-kicker">16 / Integrity check</span>
         <h2>最终真实性检查</h2>
         <ul class="checklist">
           <li>每项事实都有来源标签和证据 ID。</li>
@@ -387,6 +434,8 @@
           <li>所有推断和建议均已显式标注。</li>
           <li>所有待补充内容仍保留 [待确认]。</li>
           <li>跨语言版本保持相同证据 ID、数字、单位和贡献边界。</li>
+          <li>系统设计题有 JD 依据、完整解法、假设标签、取舍、故障场景和经验边界，或明确标记不适用。</li>
+          <li>管理层问题包含回答方案、证据或待确认项、压力追问和禁止虚构项。</li>
         </ul>
         <p><strong>岗位来源：</strong><a href="{{岗位来源链接}}" rel="noreferrer">{{岗位来源显示文本}}</a></p>
       </section>
@@ -397,7 +446,7 @@
 
   <script>
     (() => {
-      const cards = [...document.querySelectorAll('#questions details[data-search]')];
+      const cards = [...document.querySelectorAll('details[data-search]')];
       const search = document.getElementById('question-search');
       const empty = document.getElementById('empty-search');
 
