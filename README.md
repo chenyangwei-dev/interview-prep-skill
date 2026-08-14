@@ -37,6 +37,10 @@ Generate a self-contained visual HTML report with role-resume fit analysis, resu
 
 ## How it works
 
+[![Interview-prep evidence-grounded workflow](docs/diagrams/interview-prep-workflow.en.drawio.svg)](docs/diagrams/interview-prep-workflow.en.drawio)
+
+The diagram is generated with Draw.io and remains editable through the linked `.drawio` source.
+
 The extractors create a content index, not a layout truth. PDF pages and complex DOCX files still require visual review for columns, text boxes, tables, images, missing glyphs, and OCR issues.
 
 ## Report output
