@@ -72,6 +72,8 @@ python scripts/run_interview_prep.py start \
   --run-dir work/runs/example
 ```
 
+[事实｜依据：CLI 参数] 默认使用 `--engine native`。安装 `requirements-langgraph.txt` 后可传入 `--engine langgraph`；同一运行后续 `resume` 默认沿用 `state.json` 中记录的执行后端。
+
 [事实｜依据：等待协议] 未配置生成器时，命令以退出码 `3` 返回 `WAITING_FOR_GENERATION`。读取 `generation-request.json`，生成其指定的 staging HTML 与 provenance manifest，再恢复同一运行：
 
 ```bash
@@ -117,6 +119,7 @@ python scripts/run_interview_prep.py status --run-dir work/runs/example
 - `artifacts/report.html` 与 `artifacts/report.provenance.json`：通过 claim-level Guard、但尚未最终发布的内部产物。
 - `validation.json`：HTML 结构校验结果。
 - `evaluation.json`：配置 `evaluation.case_path` 时的确定性评分结果。
+- `langgraph-checkpoints.sqlite`：仅在选择 LangGraph 后端时生成，保存隐私安全的编排 checkpoint，不保存输入或报告正文。
 
 [事实｜依据：事件写入字段] `events.jsonl` 不记录 JD、简历、报告正文或外部生成器 stdout/stderr；它只记录路径、哈希、状态与诊断元数据。
 

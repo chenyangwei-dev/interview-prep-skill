@@ -109,6 +109,12 @@ For development and coverage reporting:
 python -m pip install coverage
 ```
 
+LangGraph is an optional execution backend and is only required with `--engine langgraph`:
+
+```bash
+python -m pip install -r requirements-langgraph.txt
+```
+
 Rendering PDF or DOCX pages for visual inspection may additionally require Poppler and LibreOffice in the execution environment.
 
 ## Usage
@@ -129,7 +135,7 @@ Supported inputs:
 | Languages | Chinese, English, mixed-language inputs, bilingual practice |
 | Default output | One self-contained `.html` file |
 
-No LangChain installation is required for the skill workflow. A separate application, persistent knowledge base, or large retrieval system may justify an orchestration framework, but ordinary interview preparation does not.
+The default `native` workflow requires neither LangChain nor LangGraph. Select the optional LangGraph backend when durable graph checkpoints, future node-level recovery, or human-review extensions justify it.
 
 ## Guarded DAG runner
 
@@ -159,6 +165,32 @@ python scripts/run_interview_prep.py status --run-dir work/runs/example
 ```
 
 The executable runtime currently uses five coarse nodes: `prepare → generate_report → validate_report → evaluate_report (optional) → finalize`. The finer evidence, matching, story, system-design, and management nodes are declared for future chapter-level execution and caching, but still run inside the overall generator today.
+
+Both execution backends call the same node functions and Guards:
+
+```mermaid
+flowchart LR
+    CLI[Shared CLI] --> N[Native executor]
+    CLI --> L[LangGraph StateGraph]
+    N --> P[Node functions]
+    L --> P
+    P --> S[Staged artifacts]
+    S --> G{Provenance and source Guards}
+    G -->|Pass| A[Artifact promotion]
+    G -->|Fail| X[Stop downstream nodes]
+    A --> F[Final publication gate]
+```
+
+Select LangGraph explicitly:
+
+```bash
+python scripts/run_interview_prep.py start \
+  --job work/job.json \
+  --run-dir work/runs/example \
+  --engine langgraph
+```
+
+LangGraph writes `langgraph-checkpoints.sqlite` in the run directory with orchestration metadata only: run ID, paths, return code, and last node. `state.json`, `guards/*.json`, and the provenance manifest remain authoritative for recovery, grounding, and publication. A LangGraph checkpoint does not prove that report content is source-supported.
 
 The manifest must include the complete normalized-input hash set and bind every rendered claim through `data-claim-id`. Exact source facts can pass deterministic span checks; paraphrases and inferences require a configured semantic checker. Failed staging artifacts never overwrite the requested final report.
 
@@ -233,6 +265,7 @@ Unit tests cover individual renderers, extractors, validators, and evaluators. R
 interview-prep-skill/
 ├── README.md                        # English project documentation
 ├── README.cn.md                     # Simplified Chinese project documentation
+├── requirements-langgraph.txt       # Optional LangGraph and SQLite checkpoint dependencies
 ├── LICENSE                          # Apache License 2.0
 ├── SKILL.md                         # Core workflow and behavioral contract
 ├── agents/openai.yaml              # Skill display metadata
@@ -245,6 +278,7 @@ interview-prep-skill/
 │   ├── dag.py                       # Dependency graph declarations and validation
 │   ├── provenance.py                # Source-span and claim provenance primitives
 │   ├── guards.py                    # Blocking artifact and grounding guards
+│   ├── langgraph_runtime.py         # Optional LangGraph StateGraph executor
 │   ├── run_interview_prep.py        # Staged DAG runner and final publication gate
 │   └── validate_report.py           # Deterministic HTML validator
 ├── evals/                          # Sanitized Skill-output regression cases and runner

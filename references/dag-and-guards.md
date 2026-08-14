@@ -6,6 +6,8 @@
 
 [事实｜依据：`scripts/dag.py`] 代码声明了完整内容 DAG 和当前可执行的 runtime DAG。完整内容 DAG 用于约束未来的节点级拆分；runtime DAG 当前执行 `prepare → generate_report → validate_report → evaluate_report（可选）→ finalize`。
 
+[事实｜依据：`scripts/langgraph_runtime.py`] runtime DAG 可以由默认 `native` 后端或可选 LangGraph `StateGraph` 后端执行；两者调用相同节点函数和 Guard。LangGraph 的安装、checkpoint 与隐私约束见 [langgraph-runtime.md](langgraph-runtime.md)。
+
 ## 强制 Guard
 
 [建议｜依据：引用型幻觉风险] 不要把“存在 Evidence ID”当作原文支持。生成报告必须同时输出 provenance manifest，并让每个可见主张使用 `data-claim-id` 绑定 manifest claim。

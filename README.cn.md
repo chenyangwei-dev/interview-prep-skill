@@ -109,6 +109,12 @@ DOCX 提取使用 Python 标准库，不需要 `python-docx`。
 python -m pip install coverage
 ```
 
+LangGraph 是可选执行后端；只有显式选择 `--engine langgraph` 时才需要安装：
+
+```bash
+python -m pip install -r requirements-langgraph.txt
+```
+
 渲染 PDF 或 DOCX 页面用于可视化检查时，执行环境可能还需要 Poppler 和 LibreOffice。
 
 ## 使用
@@ -136,7 +142,7 @@ python -m pip install coverage
 | 语言 | 中文、英文、中英混合输入、双语练习 |
 | 默认输出 | 一个自包含 `.html` 文件 |
 
-该 Skill 工作流不需要安装 LangChain。只有在构建独立应用、持久化知识库或大型检索系统时，才可能需要额外的编排框架。
+默认 `native` 工作流不需要 LangChain 或 LangGraph。需要持久化图 checkpoint、后续节点级恢复或人工审核扩展时，可以显式选择 LangGraph 后端。
 
 ## 带 Guard 的 DAG 运行器
 
@@ -166,6 +172,32 @@ python scripts/run_interview_prep.py status --run-dir work/runs/example
 ```
 
 当前实际 runtime 使用五个粗粒度节点：`prepare → generate_report → validate_report → evaluate_report（可选）→ finalize`。证据、匹配、故事、系统设计和管理层问答等细粒度节点已经声明，但目前仍在整体 generator 内执行，尚未实现章节级执行与缓存。
+
+两个执行后端共享相同节点函数和 Guard：
+
+```mermaid
+flowchart LR
+    CLI[统一 CLI] --> N[native 执行器]
+    CLI --> L[LangGraph StateGraph]
+    N --> P[节点函数]
+    L --> P
+    P --> S[staging 产物]
+    S --> G{provenance 与原文 Guard}
+    G -->|通过| A[artifact promotion]
+    G -->|失败| X[停止下游节点]
+    A --> F[最终发布门禁]
+```
+
+选择 LangGraph：
+
+```bash
+python scripts/run_interview_prep.py start \
+  --job work/job.json \
+  --run-dir work/runs/example \
+  --engine langgraph
+```
+
+LangGraph 会在运行目录创建 `langgraph-checkpoints.sqlite`，其中只保存运行 ID、路径、返回码和最后节点等编排元数据。`state.json`、`guards/*.json` 和 provenance manifest 仍是恢复、可信判断与发布门禁的依据；LangGraph checkpoint 本身不能证明内容有原文支持。
 
 manifest 必须包含完整的标准化输入哈希集合，并通过 `data-claim-id` 绑定每个可见主张。原文完全包含的来源事实可以通过确定性 span 检查；释义和推断需要配置 semantic checker。失败的 staging 产物不会覆盖用户指定的最终报告。
 
@@ -240,6 +272,7 @@ python -m coverage report -m
 interview-prep-skill/
 ├── README.md                        # 英文项目文档
 ├── README.cn.md                     # 简体中文项目文档
+├── requirements-langgraph.txt       # 可选 LangGraph 与 SQLite checkpoint 依赖
 ├── LICENSE                          # Apache License 2.0
 ├── SKILL.md                         # 核心工作流与行为约定
 ├── agents/openai.yaml              # Skill 展示元数据
@@ -252,6 +285,7 @@ interview-prep-skill/
 │   ├── dag.py                       # 依赖图声明与校验
 │   ├── provenance.py                # 原文 span 与 claim 溯源原语
 │   ├── guards.py                    # 阻断型 artifact 与 grounding Guard
+│   ├── langgraph_runtime.py         # 可选 LangGraph StateGraph 执行后端
 │   ├── run_interview_prep.py        # 分阶段 DAG runner 与最终发布门禁
 │   └── validate_report.py           # 确定性 HTML 验证器
 ├── evals/                          # 脱敏的 Skill 输出回归案例及运行器

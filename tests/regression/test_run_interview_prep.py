@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import importlib.util
 import json
 import shlex
 import subprocess
@@ -15,6 +16,125 @@ FIXTURE_GENERATOR = ROOT / "tests" / "regression" / "fixtures" / "generate_guard
 
 
 class RunInterviewPrepTests(unittest.TestCase):
+    @staticmethod
+    def _minimal_job(root: Path) -> Path:
+        (root / "jd.md").write_text("Synthetic JD", encoding="utf-8")
+        (root / "resume.md").write_text("Synthetic resume", encoding="utf-8")
+        job_path = root / "job.json"
+        job_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "jd": {"path": "jd.md"},
+                    "resume": {"path": "resume.md"},
+                    "languages": {
+                        "jd_language": "en",
+                        "resume_language": "en",
+                        "interview_language": "en",
+                        "report_language": "en",
+                        "answer_mode": "single",
+                    },
+                    "output": {"report_path": "output/report.html"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        return job_path
+
+    @staticmethod
+    def _fixture_command() -> str:
+        return " ".join(
+            [
+                shlex.quote(sys.executable),
+                shlex.quote(str(FIXTURE_GENERATOR)),
+                "--request",
+                "{request}",
+                "--output",
+                "{output}",
+                "--provenance",
+                "{provenance}",
+            ]
+        )
+
+    @unittest.skipUnless(importlib.util.find_spec("langgraph") is not None, "LangGraph is unavailable")
+    def test_langgraph_engine_runs_the_same_guarded_pipeline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temp = Path(directory)
+            job_path = self._minimal_job(temp)
+            run_dir = temp / "run"
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RUNNER),
+                    "start",
+                    "--job",
+                    str(job_path),
+                    "--run-dir",
+                    str(run_dir),
+                    "--generator-command",
+                    self._fixture_command(),
+                    "--engine",
+                    "langgraph",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            self.assertEqual(state["status"], "completed")
+            self.assertEqual(state["orchestrator"], "langgraph")
+            self.assertTrue((run_dir / "langgraph-checkpoints.sqlite").is_file())
+            self.assertTrue((temp / "output" / "report.html").is_file())
+            for node_id in ("prepare", "generate_report", "validate_report", "evaluate_report", "finalize"):
+                self.assertIn(state["nodes"][node_id]["status"], {"completed", "skipped"})
+                self.assertTrue((run_dir / "guards" / f"{node_id}.json").is_file())
+
+    @unittest.skipUnless(importlib.util.find_spec("langgraph") is not None, "LangGraph is unavailable")
+    def test_langgraph_waiting_run_resumes_with_the_recorded_engine(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temp = Path(directory)
+            job_path = self._minimal_job(temp)
+            run_dir = temp / "run"
+            started = subprocess.run(
+                [
+                    sys.executable,
+                    str(RUNNER),
+                    "start",
+                    "--job",
+                    str(job_path),
+                    "--run-dir",
+                    str(run_dir),
+                    "--engine",
+                    "langgraph",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(started.returncode, 3, started.stderr)
+            first_checkpoint_size = (run_dir / "langgraph-checkpoints.sqlite").stat().st_size
+
+            resumed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RUNNER),
+                    "resume",
+                    "--run-dir",
+                    str(run_dir),
+                    "--generator-command",
+                    self._fixture_command(),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(resumed.returncode, 0, resumed.stderr)
+            state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            self.assertEqual(state["status"], "completed")
+            self.assertEqual(state["orchestrator"], "langgraph")
+            self.assertGreaterEqual((run_dir / "langgraph-checkpoints.sqlite").stat().st_size, first_checkpoint_size)
+
     def test_generator_adapter_handles_placeholder_paths_with_spaces(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             temp = Path(directory)

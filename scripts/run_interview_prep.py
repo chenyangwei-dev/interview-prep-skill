@@ -26,6 +26,7 @@ from guards import (
     run_semantic_checker,
     write_guard_result,
 )
+from langgraph_runtime import LangGraphUnavailable, run_guarded_graph
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -463,16 +464,8 @@ def wait_for_generation(context: RunContext) -> int:
     return WAITING_FOR_GENERATION
 
 
-def validate_and_finalize(context: RunContext) -> int:
+def validate_report_node(context: RunContext) -> int:
     report = Path(context.state["report_path"])
-    final_report = Path(context.state["final_report_path"])
-    if (
-        context.node_status("finalize") in SUCCESS_STATUSES
-        and final_report.is_file()
-        and context.state.get("report_sha256") == sha256(final_report)
-    ):
-        print(f"COMPLETED: {final_report}")
-        return 0
     if context.node_status("generate_report") not in SUCCESS_STATUSES or not report.is_file():
         return wait_for_generation(context)
 
@@ -539,7 +532,11 @@ def validate_and_finalize(context: RunContext) -> int:
         duration_ms=elapsed_ms,
         report_sha256=sha256(report),
     )
+    return 0
 
+
+def evaluate_report_node(context: RunContext) -> int:
+    report = Path(context.state["report_path"])
     eval_case_path = context.state.get("eval_case_path")
     if eval_case_path:
         context.begin_node("evaluate_report")
@@ -582,9 +579,23 @@ def validate_and_finalize(context: RunContext) -> int:
         eval_guard.counts["skipped"] = 1
         write_guard_result(eval_guard_path, eval_guard)
         context.finish_node("evaluate_report", status="skipped", guard_path=eval_guard_path)
+    return 0
+
+
+def finalize_node(context: RunContext) -> int:
+    report = Path(context.state["report_path"])
+    final_report = Path(context.state["final_report_path"])
+    if (
+        context.node_status("finalize") in SUCCESS_STATUSES
+        and final_report.is_file()
+        and context.state.get("report_sha256") == sha256(final_report)
+    ):
+        print(f"COMPLETED: {final_report}")
+        return 0
 
     context.begin_node("finalize")
     finalize_started = time.monotonic()
+    generate_state = context.state.get("nodes", {}).get("generate_report", {})
     provenance = Path(context.state["provenance_path"])
     final_provenance = Path(context.state["final_provenance_path"])
     required_nodes = ("prepare", "generate_report", "validate_report", "evaluate_report")
@@ -628,6 +639,37 @@ def validate_and_finalize(context: RunContext) -> int:
     return 0
 
 
+def validate_and_finalize(context: RunContext) -> int:
+    for handler in (validate_report_node, evaluate_report_node, finalize_node):
+        result_code = handler(context)
+        if result_code:
+            return result_code
+    return 0
+
+
+def execute_langgraph(
+    context: RunContext,
+    *,
+    operation: str,
+    prepare_handler: Any,
+    generate_handler: Any,
+) -> int:
+    context.checkpoint(orchestrator="langgraph")
+    handlers = {
+        "prepare": prepare_handler,
+        "generate_report": generate_handler,
+        "validate_report": lambda: validate_report_node(context),
+        "evaluate_report": lambda: evaluate_report_node(context),
+        "finalize": lambda: finalize_node(context),
+    }
+    return run_guarded_graph(
+        run_dir=context.run_dir,
+        run_id=context.state["run_id"],
+        operation=operation,
+        handlers=handlers,
+    )
+
+
 def start(args: argparse.Namespace) -> int:
     job_path = args.job.expanduser().resolve()
     try:
@@ -645,6 +687,7 @@ def start(args: argparse.Namespace) -> int:
         "created_at": utc_now(),
         "updated_at": utc_now(),
         "skill_version": skill_version(),
+        "orchestrator": args.engine,
         "job_path": str(job_path),
         "completed_steps": [],
         "nodes": {node_id: {"status": "pending"} for node_id in RUNTIME_DAG.topological_order()},
@@ -652,10 +695,33 @@ def start(args: argparse.Namespace) -> int:
     context = RunContext(run_dir, state)
     context.checkpoint("created")
     try:
-        prepare_request(context, job_path, job, args.semantic_guard_command)
-        if args.generator_command:
-            run_generator(context, args.generator_command)
+        def prepare_handler() -> int:
+            prepare_request(context, job_path, job, args.semantic_guard_command)
+            return 0
+
+        def generate_handler() -> int:
+            if args.generator_command:
+                run_generator(context, args.generator_command)
+                return 0
+            return wait_for_generation(context)
+
+        if args.engine == "langgraph":
+            return execute_langgraph(
+                context,
+                operation="start",
+                prepare_handler=prepare_handler,
+                generate_handler=generate_handler,
+            )
+        prepare_handler()
+        generation_result = generate_handler()
+        if generation_result:
+            return generation_result
         return validate_and_finalize(context)
+    except LangGraphUnavailable as exc:
+        context.event("pipeline", "failed", error_type=type(exc).__name__)
+        context.checkpoint("failed", error_type=type(exc).__name__)
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
     except GuardFailure as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
@@ -673,20 +739,50 @@ def resume(args: argparse.Namespace) -> int:
         print(f"ERROR: Missing state file: {state_path}", file=sys.stderr)
         return 2
     context = RunContext(run_dir, json.loads(state_path.read_text(encoding="utf-8")))
+    engine = args.engine or context.state.get("orchestrator", "native")
+    if context.state.get("orchestrator") != engine:
+        context.checkpoint(orchestrator=engine)
     if args.semantic_guard_command:
         context.checkpoint(semantic_guard_command=args.semantic_guard_command)
     try:
-        if args.report:
-            provenance = args.provenance
-            if provenance is None:
-                inferred = Path(str(args.report) + ".provenance.json")
-                provenance = inferred if inferred.is_file() else None
-            if provenance is None:
-                raise ValueError("--provenance is required unless <report>.provenance.json exists")
-            adopt_report(context, args.report, provenance)
-        elif args.generator_command and context.node_status("generate_report") not in SUCCESS_STATUSES:
-            run_generator(context, args.generator_command)
+        def prepare_handler() -> int:
+            if context.node_status("prepare") not in SUCCESS_STATUSES:
+                raise RuntimeError("Cannot resume before the prepare node passes its Guard")
+            return 0
+
+        def generate_handler() -> int:
+            if context.node_status("generate_report") in SUCCESS_STATUSES:
+                return 0
+            if args.report:
+                provenance = args.provenance
+                if provenance is None:
+                    inferred = Path(str(args.report) + ".provenance.json")
+                    provenance = inferred if inferred.is_file() else None
+                if provenance is None:
+                    raise ValueError("--provenance is required unless <report>.provenance.json exists")
+                adopt_report(context, args.report, provenance)
+                return 0
+            if args.generator_command:
+                run_generator(context, args.generator_command)
+                return 0
+            return wait_for_generation(context)
+
+        if engine == "langgraph":
+            return execute_langgraph(
+                context,
+                operation="resume",
+                prepare_handler=prepare_handler,
+                generate_handler=generate_handler,
+            )
+        generation_result = generate_handler()
+        if generation_result:
+            return generation_result
         return validate_and_finalize(context)
+    except LangGraphUnavailable as exc:
+        context.event("pipeline", "failed", error_type=type(exc).__name__)
+        context.checkpoint("failed", error_type=type(exc).__name__)
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
     except GuardFailure as exc:
         print(f"ERROR: {exc}", file=sys.stderr)
         return 1
@@ -720,6 +816,7 @@ def show_status(args: argparse.Namespace) -> int:
         "schema_version": state["schema_version"],
         "run_id": state.get("run_id"),
         "status": state.get("status"),
+        "orchestrator": state.get("orchestrator", "native"),
         "nodes": {
             node_id: {
                 key: value
@@ -743,6 +840,7 @@ def parse_args() -> argparse.Namespace:
     start_parser.add_argument("--run-id")
     start_parser.add_argument("--generator-command")
     start_parser.add_argument("--semantic-guard-command")
+    start_parser.add_argument("--engine", choices=("native", "langgraph"), default="native")
     start_parser.set_defaults(handler=start)
 
     resume_parser = subparsers.add_parser("resume", help="Adopt guarded artifacts and continue a run")
@@ -751,6 +849,7 @@ def parse_args() -> argparse.Namespace:
     resume_parser.add_argument("--provenance", type=Path)
     resume_parser.add_argument("--generator-command")
     resume_parser.add_argument("--semantic-guard-command")
+    resume_parser.add_argument("--engine", choices=("native", "langgraph"))
     resume_parser.set_defaults(handler=resume)
 
     plan_parser = subparsers.add_parser("plan", help="Print the declared content DAG")

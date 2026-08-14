@@ -51,6 +51,7 @@ description: Create evidence-grounded, personalized interview preparation report
 - 在生成默认 HTML 交付物前，读取 [references/html-output-spec.md](references/html-output-spec.md)。
 - 在运行回归案例、建立检查点或通过统一入口执行时，读取 [references/evaluation-and-runner.md](references/evaluation-and-runner.md)。
 - 在声明 DAG、生成 provenance manifest、执行节点 Guard 或处理阻断时，读取 [references/dag-and-guards.md](references/dag-and-guards.md)。
+- 在用户明确选择 LangGraph、需要持久化图状态或扩展节点级恢复时，读取 [references/langgraph-runtime.md](references/langgraph-runtime.md)。
 - `report_language` 为中文时复制并填充 [assets/interview-prep-template.zh.html](assets/interview-prep-template.zh.html)，为英文时复制并填充 [assets/interview-prep-template.en.html](assets/interview-prep-template.en.html)。双语模式选择用户对话语言对应的主模板，仅对练习价值高的章节生成中英文配对内容。
 - 用户明确要求 Markdown 时，分别使用 [assets/interview-prep-template.zh.md](assets/interview-prep-template.zh.md) 或 [assets/interview-prep-template.en.md](assets/interview-prep-template.en.md)。
 - 允许按岗位类型删减不适用章节，但不要删除证据、缺口、语言配置和待确认标记。
@@ -64,6 +65,8 @@ description: Create evidence-grounded, personalized interview preparation report
 ```bash
 python scripts/run_interview_prep.py start --job <job.json> --run-dir <workspace-temp/run>
 ```
+
+默认使用无额外依赖的 `native` 执行后端。用户明确要求 LangGraph 时，先读取对应参考文档、安装可选依赖，并在 `start` 添加 `--engine langgraph`；后续 `resume` 沿用运行状态记录的后端。无论使用哪个后端，都不得绕过任何节点 Guard。
 
 退出码为 `3` 且显示 `WAITING_FOR_GENERATION` 时，读取运行目录中的 `generation-request.json`，继续执行本 Skill 的分析与 HTML 生成步骤。生成报告后恢复同一运行：
 
