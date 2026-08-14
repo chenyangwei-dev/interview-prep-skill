@@ -153,21 +153,36 @@ Validation is not a replacement for visual inspection. Open the report at deskto
 
 ## Testing
 
-Run the unit and integration tests:
+Run the fast, isolated unit tests:
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests/unit -p "test_*.py" -v
+```
+
+Run the cross-process and end-to-end regression tests:
+
+```bash
+python -m unittest discover -s tests/regression -p "test_*.py" -v
+```
+
+Run the deterministic Skill-output regression cases:
+
+```bash
+python evals/run_eval.py --use-samples --require-all
 ```
 
 Run line and branch coverage:
 
 ```bash
+python -m coverage erase
 python -m coverage run --branch --source=scripts \
-  -m unittest discover -s tests
+  -m unittest discover -s tests/unit -p "test_*.py"
+python -m coverage run --append --branch --source=scripts \
+  -m unittest discover -s tests/regression -p "test_*.py"
 python -m coverage report -m
 ```
 
-The test suite covers the shared Markdown renderer, PDF extraction and fallback behavior, DOCX OOXML extraction and warnings, command-line safeguards, and HTML report validation.
+Unit tests cover individual renderers, extractors, validators, and evaluators. Regression tests exercise complete command-line extraction and checkpointed workflow paths. `evals/run_eval.py` remains separate because it evaluates generated report quality rather than Python implementation units.
 
 ## Project structure
 
@@ -185,7 +200,10 @@ interview-prep-skill/
 │   ├── extract_docx.py             # DOCX OOXML → source-located Markdown
 │   ├── extraction_common.py        # Shared Markdown schema and writer
 │   └── validate_report.py          # Deterministic HTML validator
-└── tests/                          # Unit and integration tests
+├── evals/                          # Sanitized Skill-output regression cases and runner
+└── tests/
+    ├── unit/                       # Fast, isolated Python unit tests
+    └── regression/                 # Cross-process and end-to-end Python regression tests
 ```
 
 ## Evidence and honesty boundaries
@@ -203,9 +221,14 @@ Issues and pull requests are welcome for extraction edge cases, evidence safegua
 Before opening a pull request, run:
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests/unit -p "test_*.py" -v
+python -m unittest discover -s tests/regression -p "test_*.py" -v
+python evals/run_eval.py --use-samples --require-all
+python -m coverage erase
 python -m coverage run --branch --source=scripts \
-  -m unittest discover -s tests
+  -m unittest discover -s tests/unit -p "test_*.py"
+python -m coverage run --append --branch --source=scripts \
+  -m unittest discover -s tests/regression -p "test_*.py"
 python -m coverage report -m
 ```
 

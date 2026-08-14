@@ -27,8 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install coverage reportlab pdfplumber pypdf python-docx
 
-      - name: Run tests with coverage
-        run: python -m coverage run --branch --source=scripts -m unittest discover -s tests -p "test_*.py" -v
+      - name: Run unit tests with coverage
+        run: python -m coverage run --branch --source=scripts -m unittest discover -s tests/unit -p "test_*.py" -v
+
+      - name: Run regression tests with coverage
+        run: python -m coverage run --append --branch --source=scripts -m unittest discover -s tests/regression -p "test_*.py" -v
 
       - name: Run deterministic eval suite
         run: python evals/run_eval.py --use-samples --require-all --output work/eval-results.json
