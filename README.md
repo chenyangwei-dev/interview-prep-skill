@@ -26,6 +26,10 @@ Generate a self-contained visual HTML report with role-resume fit analysis, resu
 - **Evidence ledger** — attach stable `JD-*`, `CV-*`, `USER-*`, and `SRC-*` IDs to factual claims.
 - **Chinese and English support** — independently route the languages of the job description, resume, interview, report, and answers.
 - **Project deep dives** — prepare technical, behavioral, pressure, and follow-up questions around real resume projects.
+- **System-design practice** — derive 2–3 likely design prompts from JD signals, with requirements, architecture/data-flow diagrams, failure handling, trade-offs, and explicit assumptions.
+- **Management-round preparation** — prepare high-value hiring-manager questions, evidence-backed answer strategies, pressure follow-ups, and boundaries for unsupported management experience.
+- **Claim-level provenance guards** — bind rendered claims to hashed source spans and block unsupported facts, contribution escalation, numeric conflicts, and ambiguous inferences.
+- **DAG runner and staged publication** — track guarded workflow state and publish HTML plus its provenance sidecar only after validation and optional evaluation pass.
 - **Gap-focused study plan** — research first-party learning resources for important JD requirements that are missing from the resume.
 - **Deterministic document extraction** — convert PDF and DOCX resumes into source-located intermediate Markdown before analysis.
 - **Visual HTML by default** — produce one responsive, printable, self-contained file without CDN, remote fonts, analytics, or build steps.
@@ -33,24 +37,9 @@ Generate a self-contained visual HTML report with role-resume fit analysis, resu
 
 ## How it works
 
-```mermaid
-flowchart LR
-    JD[Job URL or description] --> INV[Input inventory]
-    PDF[PDF resume] --> EP[PDF extractor]
-    DOCX[DOCX resume] --> ED[DOCX extractor]
-    TEXT[Markdown or text resume] --> INV
-    EP --> MD[Source-located Markdown]
-    ED --> MD
-    MD --> VQ[Visual document review]
-    VQ --> INV
-    INV --> E[Evidence ledger]
-    E --> M[Role-resume match matrix]
-    M --> Q[Questions, answers, and deep dives]
-    M --> G[Gap-focused learning plan]
-    Q --> H[Self-contained visual HTML]
-    G --> H
-    H --> QA[Deterministic validation and visual QA]
-```
+[![Interview-prep evidence-grounded workflow](docs/diagrams/interview-prep-workflow.en.drawio.svg)](docs/diagrams/interview-prep-workflow.en.drawio)
+
+The diagram is generated with Draw.io and remains editable through the linked `.drawio` source.
 
 The extractors create a content index, not a layout truth. PDF pages and complex DOCX files still require visual review for columns, text boxes, tables, images, missing glyphs, and OCR issues.
 
@@ -64,6 +53,8 @@ The default HTML report includes:
 - tailored self-introduction and reusable story bank;
 - prioritized interview questions with 60–120 second reference answers;
 - follow-up questions, project deep dives, technical questions, and pressure questions;
+- 2–3 JD-derived system-design exercises with architecture/data-flow diagrams, reliability analysis, and trade-offs, or an explicit not-applicable result;
+- 6–8 management-round questions with answer plans, story evidence, pressure follow-ups, and no-invention boundaries;
 - gap-focused learning resources with time boxes and verifiable exercises;
 - reverse questions, preparation plan, one-page cheat sheet, and confirmation list;
 - section navigation, question search, expand/collapse controls, and print styling.
@@ -97,6 +88,12 @@ For development and coverage reporting:
 python -m pip install coverage
 ```
 
+LangGraph is an optional execution backend and is only required with `--engine langgraph`:
+
+```bash
+python -m pip install -r requirements-langgraph.txt
+```
+
 Rendering PDF or DOCX pages for visual inspection may additionally require Poppler and LibreOffice in the execution environment.
 
 ## Usage
@@ -117,7 +114,55 @@ Supported inputs:
 | Languages | Chinese, English, mixed-language inputs, bilingual practice |
 | Default output | One self-contained `.html` file |
 
-No LangChain installation is required for the skill workflow. A separate application, persistent knowledge base, or large retrieval system may justify an orchestration framework, but ordinary interview preparation does not.
+The default `native` workflow requires neither LangChain nor LangGraph. Select the optional LangGraph backend when durable graph checkpoints, future node-level recovery, or human-review extensions justify it.
+
+## Guarded DAG runner
+
+When the JD and resume are available as local files, create a run directory and normalized generation request:
+
+```bash
+python scripts/run_interview_prep.py start \
+  --job work/job.json \
+  --run-dir work/runs/example
+```
+
+Without a generator adapter, the runner exits with code `3` and prints `WAITING_FOR_GENERATION`. Generate both the requested HTML and its claim-level provenance manifest, then resume the same run:
+
+```bash
+python scripts/run_interview_prep.py resume \
+  --run-dir work/runs/example \
+  --report outputs/company-role-interview-prep.html \
+  --provenance outputs/company-role-interview-prep.html.provenance.json
+```
+
+Inspect the declared content graph, executable runtime graph, or privacy-safe state:
+
+```bash
+python scripts/run_interview_prep.py plan
+python scripts/run_interview_prep.py plan --runtime
+python scripts/run_interview_prep.py status --run-dir work/runs/example
+```
+
+The executable runtime currently uses five coarse nodes: `prepare → generate_report → validate_report → evaluate_report (optional) → finalize`. The finer evidence, matching, story, system-design, and management nodes are declared for future chapter-level execution and caching, but still run inside the overall generator today.
+
+Both execution backends call the same node functions and Guards:
+
+[![Native and LangGraph guarded DAG runtime](docs/diagrams/guarded-dag-runtime.en.drawio.svg)](docs/diagrams/guarded-dag-runtime.en.drawio)
+
+Each runtime node is followed by its blocking Guard. The editable Draw.io source is linked from the image.
+
+Select LangGraph explicitly:
+
+```bash
+python scripts/run_interview_prep.py start \
+  --job work/job.json \
+  --run-dir work/runs/example \
+  --engine langgraph
+```
+
+LangGraph writes `langgraph-checkpoints.sqlite` in the run directory with orchestration metadata only: run ID, paths, return code, and last node. `state.json`, `guards/*.json`, and the provenance manifest remain authoritative for recovery, grounding, and publication. A LangGraph checkpoint does not prove that report content is source-supported.
+
+The manifest must include the complete normalized-input hash set and bind every rendered claim through `data-claim-id`. Exact source facts can pass deterministic span checks; paraphrases and inferences require a configured semantic checker. Failed staging artifacts never overwrite the requested final report.
 
 ## Intermediate document extraction
 
@@ -182,7 +227,7 @@ python -m coverage run --append --branch --source=scripts \
 python -m coverage report -m
 ```
 
-Unit tests cover individual renderers, extractors, validators, and evaluators. Regression tests exercise complete command-line extraction and checkpointed workflow paths. `evals/run_eval.py` remains separate because it evaluates generated report quality rather than Python implementation units.
+Unit tests cover individual renderers, extractors, validators, and evaluators. Regression tests exercise complete command-line extraction, checkpointed workflow paths, DAG validation, provenance guards, and final-publication boundaries. `evals/run_eval.py` remains separate because it evaluates generated report quality rather than Python implementation units.
 
 ## Project structure
 
@@ -190,16 +235,23 @@ Unit tests cover individual renderers, extractors, validators, and evaluators. R
 interview-prep-skill/
 ├── README.md                        # English project documentation
 ├── README.cn.md                     # Simplified Chinese project documentation
+├── requirements-langgraph.txt       # Optional LangGraph and SQLite checkpoint dependencies
 ├── LICENSE                          # Apache License 2.0
 ├── SKILL.md                         # Core workflow and behavioral contract
 ├── agents/openai.yaml              # Skill display metadata
 ├── assets/                         # Chinese and English HTML/Markdown templates
+├── docs/diagrams/                  # Editable Draw.io sources and README SVG exports
 ├── references/                     # Evidence, language, questions, learning, HTML policies
 ├── scripts/
 │   ├── extract_pdf.py              # PDF → source-located Markdown
 │   ├── extract_docx.py             # DOCX OOXML → source-located Markdown
 │   ├── extraction_common.py        # Shared Markdown schema and writer
-│   └── validate_report.py          # Deterministic HTML validator
+│   ├── dag.py                       # Dependency graph declarations and validation
+│   ├── provenance.py                # Source-span and claim provenance primitives
+│   ├── guards.py                    # Blocking artifact and grounding guards
+│   ├── langgraph_runtime.py         # Optional LangGraph StateGraph executor
+│   ├── run_interview_prep.py        # Staged DAG runner and final publication gate
+│   └── validate_report.py           # Deterministic HTML validator
 ├── evals/                          # Sanitized Skill-output regression cases and runner
 └── tests/
     ├── unit/                       # Fast, isolated Python unit tests
@@ -213,6 +265,8 @@ interview-prep-skill/
 - Missing numbers, roles, dates, and results remain marked as pending confirmation.
 - Completing a study exercise does not change a resume requirement from “no evidence” to “matched.”
 - External sources support learning material, not claims about the candidate's employment history.
+- A real evidence ID alone is not sufficient: the referenced source span must support the rendered claim.
+- Inferences, recommendations, assumptions, knowledge references, and unknowns remain explicitly labeled instead of being promoted to source facts.
 
 ## Contributing
 

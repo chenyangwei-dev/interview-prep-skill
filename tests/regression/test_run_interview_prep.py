@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import importlib.util
 import json
-import re
 import shlex
 import subprocess
 import sys
@@ -12,27 +12,129 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER = ROOT / "scripts" / "run_interview_prep.py"
-
-
-def duplicate_template_card(template: str, kind: str, count: int) -> str:
-    pattern = rf'(<details[^>]+data-kind="{re.escape(kind)}"[^>]*>.*?</details>)'
-    match = re.search(pattern, template, flags=re.DOTALL)
-    if not match:
-        raise AssertionError(f"Missing template card for data-kind={kind}")
-    return template[: match.start()] + (match.group(1) * count) + template[match.end() :]
-
-
-def make_valid_report(path: Path) -> None:
-    template = (ROOT / "assets" / "interview-prep-template.zh.html").read_text(encoding="utf-8")
-    template = duplicate_template_card(template, "system-design", 2)
-    template = duplicate_template_card(template, "management-interview", 6)
-    report = re.sub(r"\{\{[^{}]+\}\}", "合成测试内容", template)
-    report = re.sub(r"<!--.*?最终输出删除本注释。.*?-->", "", report, flags=re.DOTALL)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(report, encoding="utf-8")
+FIXTURE_GENERATOR = ROOT / "tests" / "regression" / "fixtures" / "generate_guarded_report.py"
 
 
 class RunInterviewPrepTests(unittest.TestCase):
+    @staticmethod
+    def _minimal_job(root: Path) -> Path:
+        (root / "jd.md").write_text("Synthetic JD", encoding="utf-8")
+        (root / "resume.md").write_text("Synthetic resume", encoding="utf-8")
+        job_path = root / "job.json"
+        job_path.write_text(
+            json.dumps(
+                {
+                    "schema_version": 1,
+                    "jd": {"path": "jd.md"},
+                    "resume": {"path": "resume.md"},
+                    "languages": {
+                        "jd_language": "en",
+                        "resume_language": "en",
+                        "interview_language": "en",
+                        "report_language": "en",
+                        "answer_mode": "single",
+                    },
+                    "output": {"report_path": "output/report.html"},
+                }
+            ),
+            encoding="utf-8",
+        )
+        return job_path
+
+    @staticmethod
+    def _fixture_command() -> str:
+        return " ".join(
+            [
+                shlex.quote(sys.executable),
+                shlex.quote(str(FIXTURE_GENERATOR)),
+                "--request",
+                "{request}",
+                "--output",
+                "{output}",
+                "--provenance",
+                "{provenance}",
+            ]
+        )
+
+    @unittest.skipUnless(importlib.util.find_spec("langgraph") is not None, "LangGraph is unavailable")
+    def test_langgraph_engine_runs_the_same_guarded_pipeline(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temp = Path(directory)
+            job_path = self._minimal_job(temp)
+            run_dir = temp / "run"
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RUNNER),
+                    "start",
+                    "--job",
+                    str(job_path),
+                    "--run-dir",
+                    str(run_dir),
+                    "--generator-command",
+                    self._fixture_command(),
+                    "--engine",
+                    "langgraph",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(completed.returncode, 0, completed.stderr)
+            state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            self.assertEqual(state["status"], "completed")
+            self.assertEqual(state["orchestrator"], "langgraph")
+            self.assertTrue((run_dir / "langgraph-checkpoints.sqlite").is_file())
+            self.assertTrue((temp / "output" / "report.html").is_file())
+            for node_id in ("prepare", "generate_report", "validate_report", "evaluate_report", "finalize"):
+                self.assertIn(state["nodes"][node_id]["status"], {"completed", "skipped"})
+                self.assertTrue((run_dir / "guards" / f"{node_id}.json").is_file())
+
+    @unittest.skipUnless(importlib.util.find_spec("langgraph") is not None, "LangGraph is unavailable")
+    def test_langgraph_waiting_run_resumes_with_the_recorded_engine(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            temp = Path(directory)
+            job_path = self._minimal_job(temp)
+            run_dir = temp / "run"
+            started = subprocess.run(
+                [
+                    sys.executable,
+                    str(RUNNER),
+                    "start",
+                    "--job",
+                    str(job_path),
+                    "--run-dir",
+                    str(run_dir),
+                    "--engine",
+                    "langgraph",
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(started.returncode, 3, started.stderr)
+            first_checkpoint_size = (run_dir / "langgraph-checkpoints.sqlite").stat().st_size
+
+            resumed = subprocess.run(
+                [
+                    sys.executable,
+                    str(RUNNER),
+                    "resume",
+                    "--run-dir",
+                    str(run_dir),
+                    "--generator-command",
+                    self._fixture_command(),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(resumed.returncode, 0, resumed.stderr)
+            state = json.loads((run_dir / "state.json").read_text(encoding="utf-8"))
+            self.assertEqual(state["status"], "completed")
+            self.assertEqual(state["orchestrator"], "langgraph")
+            self.assertGreaterEqual((run_dir / "langgraph-checkpoints.sqlite").stat().st_size, first_checkpoint_size)
+
     def test_generator_adapter_handles_placeholder_paths_with_spaces(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             temp = Path(directory)
@@ -40,17 +142,6 @@ class RunInterviewPrepTests(unittest.TestCase):
             inputs.mkdir()
             (inputs / "jd.md").write_text("Synthetic JD", encoding="utf-8")
             (inputs / "resume.md").write_text("Synthetic resume", encoding="utf-8")
-            source_report = temp / "source report.html"
-            make_valid_report(source_report)
-            generator = temp / "copy generator.py"
-            generator.write_text(
-                "from pathlib import Path\n"
-                "import shutil, sys\n"
-                "assert Path(sys.argv[1]).is_file()\n"
-                "Path(sys.argv[2]).parent.mkdir(parents=True, exist_ok=True)\n"
-                "shutil.copyfile(sys.argv[3], sys.argv[2])\n",
-                encoding="utf-8",
-            )
             job = {
                 "schema_version": 1,
                 "jd": {"path": "input files/jd.md"},
@@ -69,10 +160,13 @@ class RunInterviewPrepTests(unittest.TestCase):
             command_template = " ".join(
                 [
                     shlex.quote(sys.executable),
-                    shlex.quote(str(generator)),
+                    shlex.quote(str(FIXTURE_GENERATOR)),
+                    "--request",
                     "{request}",
+                    "--output",
                     "{output}",
-                    shlex.quote(str(source_report)),
+                    "--provenance",
+                    "{provenance}",
                 ]
             )
 
@@ -96,7 +190,7 @@ class RunInterviewPrepTests(unittest.TestCase):
             self.assertEqual(completed.returncode, 0, completed.stderr)
             state = json.loads((temp / "run with spaces" / "state.json").read_text(encoding="utf-8"))
             self.assertEqual(state["status"], "completed")
-            self.assertEqual(state["completed_steps"], ["prepare", "generate", "validate"])
+            self.assertEqual(state["completed_steps"], ["prepare", "generate", "validate", "evaluate"])
 
     def test_prepare_wait_resume_and_logs_do_not_contain_input_text(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -111,7 +205,7 @@ class RunInterviewPrepTests(unittest.TestCase):
                 "schema_version": 1,
                 "case_id": "runner-synthetic",
                 "expected": {
-                    "allowed_evidence_ids": [],
+                    "allowed_evidence_ids": ["JD-01", "CV-01"],
                     "required_phrases": ["合成测试内容"],
                     "max_unresolved_confirmations": 999,
                 },
@@ -153,7 +247,23 @@ class RunInterviewPrepTests(unittest.TestCase):
             self.assertNotIn(private_resume, events)
 
             report = temp / "generated.html"
-            make_valid_report(report)
+            provenance = temp / "generated.html.provenance.json"
+            generated = subprocess.run(
+                [
+                    sys.executable,
+                    str(FIXTURE_GENERATOR),
+                    "--request",
+                    str(run_dir / "generation-request.json"),
+                    "--output",
+                    str(report),
+                    "--provenance",
+                    str(provenance),
+                ],
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(generated.returncode, 0, generated.stderr)
             resumed = subprocess.run(
                 [
                     sys.executable,
@@ -163,6 +273,8 @@ class RunInterviewPrepTests(unittest.TestCase):
                     str(run_dir),
                     "--report",
                     str(report),
+                    "--provenance",
+                    str(provenance),
                 ],
                 capture_output=True,
                 text=True,

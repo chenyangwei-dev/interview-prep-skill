@@ -1,0 +1,293 @@
+<mxfile host="Electron">
+  <diagram id="mTP971--hxAtQu7ASDfv" name="pageWithNumber">
+    <mxGraphModel dx="-471" dy="-383" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="0" page="0" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <UserObject label="来源材料" id="2">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=1;verticalAlign=top;fillColor=light-dark(#ffffde,#1f2020);strokeColor=light-dark(#aaaa33,#cccccc);fontColor=light-dark(#333333,#cccccc);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="124" width="834" x="39" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="职位描述" id="3">
+          <mxCell parent="2" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="124" x="35" y="45" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="PDF 简历" id="4">
+          <mxCell parent="2" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="124" x="489" y="45" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="DOCX 简历" id="5">
+          <mxCell parent="2" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="136" x="663" y="45" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Markdown / 纯文本简历" id="6">
+          <mxCell parent="2" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="230" x="209" y="45" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="带来源定位的内容提取" id="7">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="220" x="590" y="174" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="输入清单 + 材料审计" id="8">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="206" x="260" y="382" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="原文逐页视觉复核" id="9">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#dae8fc;strokeColor=#6c8ebf;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="188" x="606" y="278" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="证据账本&#xa;JD / CV / USER / SRC" id="10">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="213" x="256" y="486" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="岗位－简历匹配矩阵" id="11">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#e1d5e7;strokeColor=#9673a6;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="204" x="261" y="609" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="核心问答&#xa;参考回答 + 故事库" id="12">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="190" x="8" y="713" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="系统设计&#xa;题目 + 解法 + 流程图" id="13">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="208" x="248" y="713" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="管理层面试&#xa;问题 + 回答策略" id="14">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="174" x="506" y="713" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="证据缺口&#xa;突击学习计划" id="15">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#fff2cc;strokeColor=#d6b656;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="156" x="730" y="713" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="暂存 HTML +&#xa;provenance manifest" id="16">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#ffe6cc;strokeColor=#d79b00;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="210" x="275" y="836" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="Claim-level Guard&#xa;原文跨度 + 哈希 + 规则" id="17">
+          <mxCell parent="1" style="rhombus;html=1;strokeWidth=2;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="278" width="278" x="153" y="959" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="HTML 校验&#xa;+ 可选评测" id="18">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="73" width="137" x="201" y="1306" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="只修复无依据主张" id="19">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#f8cecc;strokeColor=#b85450;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="188" x="392" y="1316" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="原子化最终发布" id="20">
+          <mxCell parent="1" style="html=1;whiteSpace=wrap;strokeWidth=2;fillColor=#d5e8d4;strokeColor=#82b366;fontColor=#1f2937;fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontSize=16;" vertex="1">
+            <mxGeometry height="54" width="172" x="183" y="1429" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="21">
+          <mxCell edge="1" parent="1" source="4" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.24;entryY=0;" target="7">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="590" y="124" />
+                <mxPoint x="590" y="149" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="22">
+          <mxCell edge="1" parent="1" source="5" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.66;entryY=0;" target="7">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="770" y="124" />
+                <mxPoint x="770" y="149" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="23">
+          <mxCell edge="1" parent="1" source="3" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0;entryY=0.06;" target="8">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="136" y="124" />
+                <mxPoint x="136" y="149" />
+                <mxPoint x="136" y="201" />
+                <mxPoint x="136" y="253" />
+                <mxPoint x="136" y="305" />
+                <mxPoint x="136" y="357" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="24">
+          <mxCell edge="1" parent="1" source="6" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="8">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="25">
+          <mxCell edge="1" parent="1" source="7" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="9">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="26">
+          <mxCell edge="1" parent="1" source="9" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=1;entryY=0.2;" target="8">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="700" y="357" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="27">
+          <mxCell edge="1" parent="1" source="8" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="10">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="28">
+          <mxCell edge="1" parent="1" source="10" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="11">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="29">
+          <mxCell edge="1" parent="1" source="11" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0;exitY=0.87;entryX=0.5;entryY=0;" target="12">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="103" y="688" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="30">
+          <mxCell edge="1" parent="1" source="11" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.47;exitY=1;entryX=0.5;entryY=0;" target="13">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="352" y="688" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="31">
+          <mxCell edge="1" parent="1" source="11" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.93;entryX=0.5;entryY=0;" target="14">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="593" y="688" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="32">
+          <mxCell edge="1" parent="1" source="11" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.72;entryX=0.5;entryY=0;" target="15">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="808" y="688" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="33">
+          <mxCell edge="1" parent="1" source="12" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0;entryY=0.18;" target="16">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="103" y="811" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="34">
+          <mxCell edge="1" parent="1" source="13" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.42;entryY=0;" target="16">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="352" y="811" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="35">
+          <mxCell edge="1" parent="1" source="14" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=1;entryY=0.08;" target="16">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="593" y="811" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="36">
+          <mxCell edge="1" parent="1" source="15" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=1;entryY=0.29;" target="16">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="808" y="811" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="37">
+          <mxCell edge="1" parent="1" source="16" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.25;exitY=1;entryX=0.5;entryY=0;" target="17">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="292" y="934" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="通过" id="38">
+          <mxCell edge="1" parent="1" source="17" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=0.44;exitY=1;entryX=0.5;entryY=0;" target="18">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="269" y="1272" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="失败" id="39">
+          <mxCell edge="1" parent="1" source="17" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);html=1;fontSize=16;labelBackgroundColor=light-dark(#E8E8E88D,#2a2a2a8D);fontFamily=Trebuchet MS,Verdana,Arial,sans-serif;fontColor=light-dark(#333333,#cccccc);exitX=1;exitY=0.98;entryX=0.48;entryY=0;" target="19">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="475" y="1272" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="40">
+          <mxCell edge="1" parent="1" source="19" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.56;exitY=0;entryX=0.89;entryY=1;" target="16">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points">
+                <mxPoint x="518" y="1272" />
+                <mxPoint x="518" y="1098" />
+                <mxPoint x="518" y="934" />
+              </Array>
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+        <UserObject label="" id="41">
+          <mxCell edge="1" parent="1" source="18" style="curved=1;startArrow=none;endArrow=block;endSize=7;strokeColor=light-dark(#333333,#cccccc);exitX=0.5;exitY=1;entryX=0.5;entryY=0;" target="20">
+            <mxGeometry relative="1" as="geometry">
+              <Array as="points" />
+            </mxGeometry>
+          </mxCell>
+        </UserObject>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
