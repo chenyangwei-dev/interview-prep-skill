@@ -119,14 +119,14 @@
       <nav>
         <a href="#overview">Role profile</a><a href="#match">Match matrix</a><a href="#risks">Strengths & risks</a>
         <a href="#introductions">Introductions</a><a href="#stories">Story bank</a><a href="#questions">Core Q&amp;A</a>
-        <a href="#deep-dive">Deep dives</a><a href="#crash-course">Gap crash course</a><a href="#reverse">Questions to ask</a><a href="#plan">Preparation plan</a>
+        <a href="#deep-dive">Deep dives</a><a href="#system-design">System design</a><a href="#management-interview">Management interview</a><a href="#crash-course">Gap crash course</a><a href="#reverse">Questions to ask</a><a href="#plan">Preparation plan</a>
         <a href="#cheat-sheet">Cheat sheet</a><a href="#evidence">Evidence</a><a href="#confirmations">To confirm</a><a href="#integrity">Integrity check</a>
       </nav>
     </aside>
 
     <main>
       <div class="toolbar" aria-label="Report actions">
-        <input id="question-search" class="search" type="search" placeholder="Search questions, answers, or evidence IDs" aria-label="Search core questions">
+        <input id="question-search" class="search" type="search" placeholder="Search questions, solutions, answers, or evidence IDs" aria-label="Search all interview questions">
         <button class="control" id="expand-all" type="button">Expand all Q&amp;A</button>
         <button class="control" id="collapse-all" type="button">Collapse all Q&amp;A</button>
         <button class="control" id="print-report" type="button">Print / Save PDF</button>
@@ -197,8 +197,48 @@
         <div class="grid-3"><article class="card"><h3>Project deep dives</h3>{{project deep dives}}</article><article class="card"><h3>Professional or technical preparation</h3>{{professional or technical preparation}}</article><article class="card"><h3>Behavioral and pressure questions</h3>{{behavioral and pressure questions}}</article></div>
       </section>
 
+      <section id="system-design">
+        <span class="section-kicker">08 / System design</span><h2>System design: 2–3 likely JD-derived questions and solutions</h2>
+        <p class="lead"><span class="chip inference">[Inference | basis: JD evidence]</span> These questions are derived from role responsibilities and quality attributes; they are not claimed to be the company’s actual questions or architecture. Practice numbers must come from the JD or be labeled [Assumption].</p>
+        <details class="qa-card" data-search data-kind="system-design" open>
+          <summary>System design 1 | {{question}}</summary>
+          <div class="qa-body">
+            <p><strong>Why it may be asked:</strong> <span class="chip inference">[Inference | basis: {{JD-ID}}]</span> {{basis}}</p>
+            <p><strong>Clarifying questions:</strong> {{3–6 clarifying questions}}</p>
+            <p><strong>Requirements, non-functional constraints, and non-goals:</strong> {{content}}</p>
+            <p><strong>Assumptions and capacity estimates:</strong> {{JD numbers or practice numbers labeled [Assumption], formulas, and design impact}}</p>
+            <p><strong>API/event contracts and data model:</strong> {{content}}</p>
+            <div class="answer"><strong>Architecture diagram and end-to-end flow</strong>{{plain-text flow, table, or inline SVG}}</div>
+            <p><strong>Component deep dive:</strong> {{content}}</p>
+            <p><strong>Scale, reliability, degradation, observability, security, privacy, and cost:</strong> {{content}}</p>
+            <p><strong>Failure scenarios and recovery:</strong> {{2–4 scenarios}}</p>
+            <p><strong>Alternatives and trade-offs:</strong> {{content}}</p>
+            <p><strong>8–12 minute walkthrough:</strong> {{content}}</p>
+            <p><strong>Follow-ups:</strong> {{2–4 follow-ups}}</p>
+            <p><strong>Experience boundary:</strong> <span class="chip recommendation">[Recommendation | basis: {{CV-ID or evidence gap}}]</span> {{knowledge reference/personal experience/to confirm}}</p>
+          </div>
+        </details><!-- Duplicate for 2–3 questions; when not applicable, remove the example and state the evidence-based reason; remove this comment from the final output. -->
+      </section>
+
+      <section id="management-interview">
+        <span class="section-kicker">09 / Management interview</span><h2>Management interview: concerns, questions, and answer strategies</h2>
+        <p class="lead"><span class="chip inference">[Inference | basis: role level, business outcomes, and stakeholder scope]</span> Management concerns are derived from the materials. Include people-management questions only when the JD or resume supports management responsibility.</p>
+        <details class="qa-card" data-search data-kind="management-interview" open>
+          <summary>Management question 1 | {{question}}</summary>
+          <div class="qa-body">
+            <p><span class="chip recommendation">{{high/medium/low}} priority</span></p>
+            <p><strong>Management concern:</strong> <span class="chip inference">[Inference | basis: {{JD-ID or role analysis}}]</span> {{concern}}</p>
+            <p><strong>Answer strategy:</strong> {{thesis—evidence story—key judgment—result—learning—role connection}}</p>
+            <p><strong>Recommended story and evidence:</strong> {{CV-ID/USER-ID/[To confirm]}}</p>
+            <div class="answer"><strong>Suggested answer or fill-in scaffold</strong>{{60–120 second content}}</div>
+            <p><strong>Pressure follow-ups:</strong> {{2–4 follow-ups}}</p>
+            <p><strong>Answer risk and prohibited inventions:</strong> <span class="chip recommendation">[Recommendation | basis: evidence boundary]</span> {{content}}</p>
+          </div>
+        </details><!-- Duplicate for 6–8 high-value questions; remove this comment from the final output. -->
+      </section>
+
       <section id="crash-course">
-        <span class="section-kicker">08 / Gap crash course</span><h2>JD gap crash course: learning resources and verifiable practice</h2>
+        <span class="section-kicker">10 / Gap crash course</span><h2>JD gap crash course: learning resources and verifiable practice</h2>
         <p class="lead"><span class="chip recommendation">[Recommendation | basis: match matrix]</span> Learning supports knowledge-based answers; it is not production experience and does not change the match rating.</p>
         <div class="grid-2">{{prioritized gap learning units: JD evidence, SRC resources, timebox, concepts, practice deliverable, completion standard, answer boundary}}</div>
         <h3>Shortest learning path</h3>{{4–8 hour shortest path and integrated assessment}}
@@ -207,31 +247,31 @@
       </section>
 
       <section id="reverse">
-        <span class="section-kicker">09 / Interview strategy</span><h2>Questions to ask and mock interview</h2>
+        <span class="section-kicker">11 / Interview strategy</span><h2>Questions to ask and mock interview</h2>
         <div class="grid-2"><article class="card"><h3>Questions for the interviewer</h3>{{questions for the interviewer}}</article><article class="card"><h3>Mock interview script</h3>{{mock interview script}}</article></div>
       </section>
 
       <section id="plan">
-        <span class="section-kicker">10 / Preparation plan</span><h2>Preparation plan</h2>
+        <span class="section-kicker">12 / Preparation plan</span><h2>Preparation plan</h2>
         <div class="table-wrap"><table><thead><tr><th>Time</th><th>Task</th><th>Deliverable</th><th>Completion standard</th></tr></thead><tbody><tr><td>{{date/time}}</td><td>{{task}}</td><td>{{deliverable}}</td><td>{{standard}}</td></tr></tbody></table></div>
       </section>
 
       <section id="cheat-sheet">
-        <span class="section-kicker">11 / Last-minute brief</span><h2>One-page interview cheat sheet</h2>
-        <div class="grid-2"><article class="card"><h3>What the role values most</h3>{{three priorities}}</article><article class="card"><h3>My strongest evidence</h3>{{three evidence points}}</article><article class="card"><h3>Stories I must tell</h3>{{three stories}}</article><article class="card"><h3>Risks and questions to ask</h3>{{risks and questions}}</article></div>
+        <span class="section-kicker">13 / Last-minute brief</span><h2>One-page interview cheat sheet</h2>
+        <div class="grid-2"><article class="card"><h3>What the role values most</h3>{{three priorities}}</article><article class="card"><h3>My strongest evidence</h3>{{three evidence points}}</article><article class="card"><h3>Stories I must tell</h3>{{three stories}}</article><article class="card"><h3>System-design and management throughlines</h3>{{system-design and management throughlines}}</article><article class="card"><h3>Risks and questions to ask</h3>{{risks and questions}}</article></div>
       </section>
 
       <section id="evidence">
-        <span class="section-kicker">12 / Evidence ledger</span><h2>Evidence ledger and bilingual terminology</h2>
+        <span class="section-kicker">14 / Evidence ledger</span><h2>Evidence ledger and bilingual terminology</h2>
         <h3>Evidence ledger</h3><div class="table-wrap"><table><thead><tr><th>ID</th><th>Source</th><th>Original language</th><th>Summary</th><th>Use</th><th>Status</th></tr></thead><tbody><tr><td>{{ID}}</td><td>{{source}}</td><td>{{language}}</td><td>{{summary}}</td><td>{{use}}</td><td>{{status}}</td></tr></tbody></table></div>
         <h3>Bilingual terminology</h3><div class="table-wrap"><table><thead><tr><th>Original</th><th>Target-language expression</th><th>Evidence ID</th><th>Notes</th></tr></thead><tbody><tr><td>{{term}}</td><td>{{expression}}</td><td>{{ID}}</td><td>{{scope or contribution boundary}}</td></tr></tbody></table></div>
       </section>
 
-      <section id="confirmations"><span class="section-kicker">13 / To confirm</span><h2>To-confirm list</h2><ol>{{to-confirm list}}</ol></section>
+      <section id="confirmations"><span class="section-kicker">15 / To confirm</span><h2>To-confirm list</h2><ol>{{to-confirm list}}</ol></section>
 
       <section id="integrity">
-        <span class="section-kicker">14 / Integrity check</span><h2>Final integrity check</h2>
-        <ul class="checklist"><li>Every factual claim has a source label and evidence ID.</li><li>Individual contribution and team results are not overstated.</li><li>Numbers, dates, tools, and results trace back to the supplied materials.</li><li>Every inference and recommendation is explicitly labeled.</li><li>Every missing detail remains marked [To confirm].</li><li>Cross-language content preserves evidence IDs, numbers, units, and contribution boundaries.</li></ul>
+        <span class="section-kicker">16 / Integrity check</span><h2>Final integrity check</h2>
+        <ul class="checklist"><li>Every factual claim has a source label and evidence ID.</li><li>Individual contribution and team results are not overstated.</li><li>Numbers, dates, tools, and results trace back to the supplied materials.</li><li>Every inference and recommendation is explicitly labeled.</li><li>Every missing detail remains marked [To confirm].</li><li>Cross-language content preserves evidence IDs, numbers, units, and contribution boundaries.</li><li>System-design questions have JD bases, complete solutions, labeled assumptions, trade-offs, failure scenarios, and experience boundaries, or are explicitly marked not applicable.</li><li>Management questions include answer strategies, evidence or confirmation items, pressure follow-ups, and prohibited inventions.</li></ul>
         <p><strong>Job source:</strong> <a href="{{job source URL}}" rel="noreferrer">{{job source label}}</a></p>
       </section>
     </main>
@@ -241,7 +281,7 @@
 
   <script>
     (() => {
-      const cards = [...document.querySelectorAll('#questions details[data-search]')];
+      const cards = [...document.querySelectorAll('details[data-search]')];
       const search = document.getElementById('question-search');
       const empty = document.getElementById('empty-search');
       function filterQuestions() {

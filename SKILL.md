@@ -1,6 +1,6 @@
 ---
 name: interview-prep
-description: Create evidence-grounded, personalized interview preparation reports as self-contained visual HTML by default from Chinese, English, or mixed-language job listings and resumes supplied as URLs, screenshots, PDFs, DOCX, Markdown, or text. Use when analyzing role-resume fit across languages, generating Chinese, English, or bilingual resume-specific answers, practicing project deep dives, behavioral or technical questions, mock interviews, reverse questions, or short-term preparation plans, including requests such as 面试准备、英文面试、双语问答、岗位匹配、根据简历回答、项目深挖、可视化面试报告.
+description: Create evidence-grounded, personalized interview preparation reports as self-contained visual HTML by default from Chinese, English, or mixed-language job listings and resumes supplied as URLs, screenshots, PDFs, DOCX, Markdown, or text. Use when analyzing role-resume fit across languages; generating Chinese, English, or bilingual resume-specific answers; practicing project deep dives, behavioral or technical questions; preparing 2–3 JD-derived system-design problems with solutions; preparing hiring-manager or management-round questions and answer strategies; running mock interviews; drafting reverse questions; or building short-term preparation plans, including requests such as 面试准备、英文面试、双语问答、岗位匹配、根据简历回答、项目深挖、系统设计、管理层面试、可视化面试报告.
 ---
 
 # Interview Prep
@@ -46,6 +46,7 @@ description: Create evidence-grounded, personalized interview preparation report
 - 在提取和引用事实前，读取 [references/evidence-policy.md](references/evidence-policy.md)。
 - 在识别输入语言、跨语言匹配或生成中英文内容前，读取 [references/language-policy.md](references/language-policy.md)。
 - 在生成问题、答案和追问前，读取 [references/question-framework.md](references/question-framework.md)。
+- 在生成系统设计题、系统设计解法或管理层面试内容前，读取 [references/system-and-management-interviews.md](references/system-and-management-interviews.md)。
 - 在为无证据或部分匹配项检索突击资料前，读取 [references/learning-resources-policy.md](references/learning-resources-policy.md)。
 - 在生成默认 HTML 交付物前，读取 [references/html-output-spec.md](references/html-output-spec.md)。
 - 在运行回归案例、建立检查点或通过统一入口执行时，读取 [references/evaluation-and-runner.md](references/evaluation-and-runner.md)。
@@ -97,6 +98,8 @@ python scripts/run_interview_prep.py resume \
 - 必须具备的能力、经验和工具。
 - 加分项、软技能、协作对象和管理范围。
 - 可能的面试轮次关注点。
+- 与系统设计相关的业务对象、规模、质量属性和技术约束。
+- 管理层可能关注的业务结果、决策权限、协作对象、风险和管理范围。
 
 将“岗位成功标准”和“面试轮次关注点”标记为 `[推断]`，除非职位描述明确陈述。
 
@@ -153,6 +156,18 @@ python scripts/run_interview_prep.py resume \
 
 将通用专业知识与候选人确有经历分开，避免把知识型参考答案写成亲历事实。
 
+系统设计专项：
+
+- 当 JD 出现系统、平台、数据、集成、架构、规模、可靠性、安全或技术负责人信号时，生成 2–3 道最可能的系统设计题；每题必须引用 JD 证据 ID 并标记为 `[推断]`，不得声称是公司的真实题库。
+- 每题给出澄清问题、需求与边界、带标签的假设和容量估算、API/数据模型、架构与数据流、关键组件深挖、扩展与可靠性、安全与可观测性、成本、故障处理、备选方案与取舍、讲解顺序、追问和自检清单。
+- 若 JD 没有足够信号，明确标记系统设计专项不适用；仅在用户明确要求时追加标记为 `[建议]` 的迁移型练习题。
+
+管理层面试专项：
+
+- 默认根据岗位级别、业务目标、成功标准、协作对象和管理范围，生成 6–8 道管理层可能关心的高价值问题；人员管理题只在 JD 或简历支持管理职责时加入。
+- 每题给出管理层关注点、回答方案、推荐故事与证据 ID、60–120 秒参考回答或证据不足时的可填充骨架、2–4 个压力追问、回答风险和禁止虚构项。
+- 将“管理层可能关注”标记为 `[推断]`，不要把管理层面试轮次、面试官身份或内部评价标准写成事实，除非材料明确陈述。
+
 对 `无证据` 和高风险 `部分匹配` 项生成“缺口突击”章节：
 
 - 使用网络检索最新资料，技术主题优先官方文档、标准、论文或项目一手仓库。
@@ -166,7 +181,7 @@ python scripts/run_interview_prep.py resume \
 
 基于语言配置选择模板，生成一个无需构建步骤、无需网络即可打开的 `.html` 文件。将 CSS 与 JavaScript 内联，不加载 CDN、外部字体、远程图片或分析脚本。默认文件名使用 `<company>-<role>-interview-prep.html`；公司或岗位未知时使用 `interview-prep-report.html`。
 
-报告必须包含：顶部摘要卡片、岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、压力题、缺口突击学习资料、反向提问、准备计划、一页速查表和待确认清单。提供章节导航、问题搜索、问答展开/收起和打印按钮；交互失效时，正文仍须完整可读。
+报告必须包含：顶部摘要卡片、岗位画像、语言配置、证据账本、匹配矩阵、跨语言术语表、自我介绍、故事库、问题与答案、项目深挖、专业题、系统设计、管理层面试、压力题、缺口突击学习资料、反向提问、准备计划、一页速查表和待确认清单。系统设计不适用时保留章节并说明依据。提供章节导航、问题搜索、问答展开/收起和打印按钮；交互失效时，正文仍须完整可读。
 
 摘要只展示由报告内容直接计数得到的数量，例如强匹配项、部分匹配项、证据缺口和高优先级问题。不要生成没有明确评分口径的匹配百分比、雷达图或综合分数。
 
@@ -189,6 +204,8 @@ python scripts/run_interview_prep.py resume \
 - 问题与答案使用目标面试语言，分析说明使用目标报告语言。
 - 英文回答符合自然口语表达，不是中文句式的逐词翻译。
 - 核心回答能够在两分钟内自然说完，且存在可继续追问的细节。
+- 系统设计专项包含 2–3 道有 JD 依据的题目，或明确说明不适用；每题包含完整解法、取舍、故障场景、假设标签和经验边界。
+- 管理层问题与岗位级别、业务目标或管理范围相关；每题包含回答方案、证据或待确认项、压力追问和禁止虚构项。
 - 文档明确展示薄弱点，不用漂亮措辞掩盖证据缺口。
 - 突击资料逐项对应缺口，使用一手来源，包含时间盒、练习产出和诚实表达边界；学习完成不改写为工作经历。
 - HTML 为单文件，自包含且无需网络；没有外部脚本、样式表、字体或图片依赖。

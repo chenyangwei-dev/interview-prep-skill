@@ -1,4 +1,4 @@
 interface:
   display_name: "Interview Prep / 面试准备"
-  short_description: "生成中英文岗位与简历匹配的可视化面试准备 HTML"
-  default_prompt: "使用 $interview-prep，根据岗位和简历生成对应面试语言的单文件可视化 HTML 准备报告。"
+  short_description: "生成含系统设计解法、管理层问答与证据追溯的双语面试准备报告"
+  default_prompt: "使用 $interview-prep，根据岗位和简历生成含系统设计解法与管理层问答策略的单文件可视化 HTML 准备报告。"

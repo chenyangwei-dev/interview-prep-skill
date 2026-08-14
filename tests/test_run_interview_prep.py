@@ -14,8 +14,18 @@ ROOT = Path(__file__).resolve().parents[1]
 RUNNER = ROOT / "scripts" / "run_interview_prep.py"
 
 
+def duplicate_template_card(template: str, kind: str, count: int) -> str:
+    pattern = rf'(<details[^>]+data-kind="{re.escape(kind)}"[^>]*>.*?</details>)'
+    match = re.search(pattern, template, flags=re.DOTALL)
+    if not match:
+        raise AssertionError(f"Missing template card for data-kind={kind}")
+    return template[: match.start()] + (match.group(1) * count) + template[match.end() :]
+
+
 def make_valid_report(path: Path) -> None:
     template = (ROOT / "assets" / "interview-prep-template.zh.html").read_text(encoding="utf-8")
+    template = duplicate_template_card(template, "system-design", 2)
+    template = duplicate_template_card(template, "management-interview", 6)
     report = re.sub(r"\{\{[^{}]+\}\}", "合成测试内容", template)
     report = re.sub(r"<!--.*?最终输出删除本注释。.*?-->", "", report, flags=re.DOTALL)
     path.parent.mkdir(parents=True, exist_ok=True)

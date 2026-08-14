@@ -19,6 +19,8 @@ REQUIRED_SECTION_IDS = {
     "stories",
     "questions",
     "deep-dive",
+    "system-design",
+    "management-interview",
     "reverse",
     "plan",
     "cheat-sheet",
@@ -150,6 +152,66 @@ def validate(path: Path, allow_placeholders: bool) -> tuple[list[str], list[str]
         errors.append("Missing expand-all or collapse-all Q&A control.")
     if "print-report" not in parser.ids:
         errors.append("Missing print-report control.")
+
+    system_section = None
+    management_section = None
+
+    if "system-design" in parser.ids:
+        system_section = re.search(
+            r'<section[^>]+id=["\']system-design["\'][^>]*>(.*?)</section>',
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if system_section and not re.search(
+            r"system design|系统设计|不适用|not applicable",
+            system_section.group(1),
+            flags=re.IGNORECASE,
+        ):
+            errors.append("System-design section lacks a heading or an explicit not-applicable statement.")
+
+    if "management-interview" in parser.ids:
+        management_section = re.search(
+            r'<section[^>]+id=["\']management-interview["\'][^>]*>(.*?)</section>',
+            text,
+            flags=re.IGNORECASE | re.DOTALL,
+        )
+        if management_section and not re.search(
+            r"management|hiring manager|管理层|主管",
+            management_section.group(1),
+            flags=re.IGNORECASE,
+        ):
+            errors.append("Management-interview section lacks a recognizable heading.")
+
+    if not allow_placeholders:
+        system_card_count = len(
+            re.findall(r'<details[^>]+data-kind=["\']system-design["\']', text, flags=re.IGNORECASE)
+        )
+        system_visible_text = (
+            re.sub(r"<!--.*?-->", "", system_section.group(1), flags=re.DOTALL)
+            if system_section
+            else ""
+        )
+        system_not_applicable = bool(
+            re.search(r"不适用|not applicable", system_visible_text, flags=re.IGNORECASE)
+        )
+        if not system_not_applicable and system_card_count not in {2, 3}:
+            errors.append(
+                "System-design section must contain 2–3 details cards with "
+                "data-kind=system-design, or explicitly state that it is not applicable."
+            )
+
+        management_card_count = len(
+            re.findall(
+                r'<details[^>]+data-kind=["\']management-interview["\']',
+                text,
+                flags=re.IGNORECASE,
+            )
+        )
+        if management_card_count not in range(6, 9):
+            errors.append(
+                "Management-interview section must contain 6–8 details cards with "
+                "data-kind=management-interview."
+            )
 
     has_zh_labels = "[JD事实" in text and "[简历事实" in text
     has_en_labels = "[JD Fact" in text and "[Resume Fact" in text
