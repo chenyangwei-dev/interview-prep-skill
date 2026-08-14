@@ -37,10 +37,6 @@
 
 ## 工作流程
 
-[![面试准备证据工作流](docs/diagrams/interview-prep-workflow.zh.drawio.svg)](docs/diagrams/interview-prep-workflow.zh.drawio)
-
-该图使用 Draw.io 生成；点击图片可打开对应的可编辑 `.drawio` 源文件。
-
 提取器生成的是内容索引，不是排版真值。PDF 页面和复杂 DOCX 仍需要可视化检查，以发现分栏、文本框、表格、图片、字形缺失和 OCR 问题。
 
 ## 报告输出
