@@ -160,21 +160,36 @@ python scripts/validate_report.py path/to/interview-prep-report.html
 
 ## 测试
 
-运行单元测试和集成测试：
+运行快速、隔离的单元测试：
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests/unit -p "test_*.py" -v
+```
+
+运行跨进程和端到端回归测试：
+
+```bash
+python -m unittest discover -s tests/regression -p "test_*.py" -v
+```
+
+运行确定性的 Skill 输出回归案例：
+
+```bash
+python evals/run_eval.py --use-samples --require-all
 ```
 
 运行行覆盖率和分支覆盖率：
 
 ```bash
+python -m coverage erase
 python -m coverage run --branch --source=scripts \
-  -m unittest discover -s tests
+  -m unittest discover -s tests/unit -p "test_*.py"
+python -m coverage run --append --branch --source=scripts \
+  -m unittest discover -s tests/regression -p "test_*.py"
 python -m coverage report -m
 ```
 
-测试集覆盖共享 Markdown 渲染器、PDF 提取及回退逻辑、DOCX OOXML 提取及警告、命令行保护和 HTML 报告验证。
+单元测试覆盖独立的渲染器、提取器、验证器和评估器。回归测试覆盖完整的命令行提取和带检查点工作流。`evals/run_eval.py` 保持独立，因为它评估生成报告的质量，而不是 Python 实现单元。
 
 ## 项目结构
 
@@ -192,7 +207,10 @@ interview-prep-skill/
 │   ├── extract_docx.py             # DOCX OOXML → 带来源位置的 Markdown
 │   ├── extraction_common.py        # 共享 Markdown 模式与写入器
 │   └── validate_report.py          # 确定性 HTML 验证器
-└── tests/                          # 单元测试和集成测试
+├── evals/                          # 脱敏的 Skill 输出回归案例及运行器
+└── tests/
+    ├── unit/                       # 快速、隔离的 Python 单元测试
+    └── regression/                 # 跨进程和端到端 Python 回归测试
 ```
 
 ## 证据与真实性边界
@@ -210,9 +228,14 @@ interview-prep-skill/
 打开 Pull Request 前，请运行：
 
 ```bash
-python -m unittest discover -s tests -v
+python -m unittest discover -s tests/unit -p "test_*.py" -v
+python -m unittest discover -s tests/regression -p "test_*.py" -v
+python evals/run_eval.py --use-samples --require-all
+python -m coverage erase
 python -m coverage run --branch --source=scripts \
-  -m unittest discover -s tests
+  -m unittest discover -s tests/unit -p "test_*.py"
+python -m coverage run --append --branch --source=scripts \
+  -m unittest discover -s tests/regression -p "test_*.py"
 python -m coverage report -m
 ```
 

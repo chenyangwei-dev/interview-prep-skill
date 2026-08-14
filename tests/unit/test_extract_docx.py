@@ -11,7 +11,7 @@ from unittest.mock import patch
 from xml.etree import ElementTree as ET
 
 
-SCRIPTS = Path(__file__).resolve().parents[1] / "scripts"
+SCRIPTS = Path(__file__).resolve().parents[2] / "scripts"
 sys.path.insert(0, str(SCRIPTS))
 
 import extract_docx  # noqa: E402
